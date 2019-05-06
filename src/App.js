@@ -1,15 +1,29 @@
 import React from 'react';
-import styled from 'styled-components';
-import Header from './components/Header/Header';
-import Grid from './components/Grid/Grid';
+import styled, { createGlobalStyle } from 'styled-components';
 
-const Container = styled.div``;
+import Game from './components/Game/Game';
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const GlobalStyle = createGlobalStyle`
+  *, *::after, *::before {
+    padding: 0;
+    margin: 0;
+    box-sizing: inherit;
+  }
+  body {
+    box-sizing: border-box;  
+  }
+`;
 
 function App() {
   return (
     <Container>
-      <Header />
-      <Grid />
+      <GlobalStyle />
+      <Game />
     </Container>
   );
 }
