@@ -78,7 +78,6 @@ const initialState = {
 const gridReducer = (state = initialState, action) => {
   switch (action.type) {
     case CREATE_GRID:
-      debugger;
       const { height, width, minesQuantity } = action.payload;
       let grid = createGrid(height, width, minesQuantity);
 
