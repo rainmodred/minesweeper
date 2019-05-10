@@ -1,5 +1,6 @@
-import { CREATE_GRID } from '../actions/grid';
+import { CREATE_GRID, OPEN_CELL } from '../actions/grid';
 
+//need refactor
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -14,7 +15,7 @@ function createGrid(height, width, minesQuantity) {
       grid[row].push({
         row: row,
         col: col,
-        isOpened: true,
+        isOpened: false,
         hasMine: false,
         neighbourMineCount: 0,
         id: id,
@@ -68,6 +69,90 @@ function findNeighbourMineCount(grid, row, col) {
   return neighbourMineCount;
 }
 
+function openCell(grid, row, col) {
+  let cell = grid[row][col];
+  console.log(cell);
+  //debugger;
+
+  if (cell.isOpened) {
+    return grid;
+  }
+
+  if (cell.hasMine) {
+    cell.isOpened = true;
+    //gameover
+    return grid;
+  }
+
+  if (cell.neighbourMineCount > 0) {
+    cell.isOpened = true;
+    //checkwin
+    return grid;
+  }
+
+  if (cell.neighbourMineCount === 0) {
+    //debugger;
+    cell.isOpened = true;
+    floodFill(grid, cell);
+    console.log(grid);
+    return grid;
+  }
+}
+
+//queue flood fill
+function floodFill(grid, cell) {
+  const que = [];
+  //debugger;
+  let { row, col, isOpened } = cell;
+
+  que.push(cell);
+  while (que.length !== 0) {
+    let n = que.shift();
+    //let pos = this.getIndex(n);
+    //console.log(que.length);
+    if (n.col - 1 >= 0 && n.col - 1 < 9) {
+      if (grid[n.row][n.col - 1].neighbourMineCount === 0) {
+        if (grid[n.row][n.col - 1].isOpened === false) {
+          grid[n.row][n.col - 1].isOpened = true;
+          que.push(grid[n.row][n.col - 1]);
+        }
+      } else {
+        grid[n.row][n.col - 1].isOpened = true;
+      }
+    }
+    if (n.col + 1 >= 0 && n.col + 1 < 9) {
+      if (grid[n.row][n.col + 1].neighbourMineCount === 0) {
+        if (grid[n.row][n.col + 1].isOpened === false) {
+          grid[n.row][n.col + 1].isOpened = true;
+          que.push(grid[n.row][n.col + 1]);
+        }
+      } else {
+        grid[n.row][n.col + 1].isOpened = true;
+      }
+    }
+    if (n.row - 1 >= 0 && n.row - 1 < 9) {
+      if (grid[n.row - 1][n.col].neighbourMineCount === 0) {
+        if (grid[n.row - 1][n.col].isOpened === false) {
+          grid[n.row - 1][n.col].isOpened = true;
+          que.push(grid[n.row - 1][n.col]);
+        }
+      } else {
+        grid[n.row - 1][n.col].isOpened = true;
+      }
+    }
+    if (n.row + 1 >= 0 && n.row + 1 < 9) {
+      if (grid[n.row + 1][n.col].neighbourMineCount === 0) {
+        if (grid[n.row + 1][n.col].isOpened === false) {
+          grid[n.row + 1][n.col].isOpened = true;
+          que.push(grid[n.row + 1][n.col]);
+        }
+      } else {
+        grid[n.row + 1][n.col].isOpened = true;
+      }
+    }
+  }
+}
+
 const initialState = {
   grid: [],
   minesQuantity: 10,
@@ -82,6 +167,12 @@ const gridReducer = (state = initialState, action) => {
       let grid = createGrid(height, width, minesQuantity);
 
       return { ...state, grid: grid };
+    case OPEN_CELL:
+      const { row, col } = action.payload;
+      let copyGrid = state.grid.map(row => [...row]);
+      let newGrid = openCell(copyGrid, row, col);
+      console.log(newGrid);
+      return { ...state, grid: newGrid };
     default:
       return state;
   }

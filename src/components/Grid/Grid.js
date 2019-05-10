@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Cell from '../Cell/Cell';
-import { createGrid } from '../../actions/grid';
+import { createGrid, openCell } from '../../actions/grid';
 
 const Container = styled.div`
   display: grid;
@@ -31,6 +31,7 @@ class Grid extends Component {
             neighbourMineCount={cell.neighbourMineCount}
             row={cell.row}
             col={cell.col}
+            leftClick={this.props.onCellLeftClick}
           />
         );
       })
@@ -52,6 +53,7 @@ const mapStateToProps = ({ grid: { grid, height, width, minesQuantity } }) => {
 const mapDispatchToProps = dispatch => {
   return {
     createGrid: (height, width, minesCount) => dispatch(createGrid(height, width, minesCount)),
+    onCellLeftClick: (row, col) => dispatch(openCell(row, col)),
   };
 };
 export default connect(
