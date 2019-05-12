@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import Digit from '../Digit/Digit';
 
-import face from '../../assets/face_1.png';
+import face from '../../assets/face1.png';
 
 const StyledHeader = styled.div`
   display: flex;

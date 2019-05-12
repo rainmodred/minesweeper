@@ -17,6 +17,7 @@ function createGrid(height, width, minesQuantity) {
         col: col,
         isOpened: false,
         hasMine: false,
+        hasFlag: false,
         neighbourMineCount: 0,
         id: id,
       });

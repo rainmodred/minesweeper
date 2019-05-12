@@ -27,6 +27,7 @@ class Grid extends Component {
           <Cell
             key={cell.id}
             hasMine={cell.hasMine}
+            hasFlag={cell.hasFlag}
             isOpened={cell.isOpened}
             neighbourMineCount={cell.neighbourMineCount}
             row={cell.row}
