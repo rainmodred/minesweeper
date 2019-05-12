@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import Digit from '../Digit/Digit';
-
 import face from '../../assets/face1.png';
 
 const StyledHeader = styled.div`
@@ -43,9 +42,10 @@ const SmilePlaceholder = styled.div`
 
 `;
 
-class Header extends Component {
+class ScoreBoard extends Component {
   state = {
     seconds: 0,
+    flagsLeft: 10,
   };
 
   startTimer = () => {
@@ -63,10 +63,11 @@ class Header extends Component {
     }
   };
   componentDidMount() {
-    this.startTimer();
+    //this.startTimer();
   }
 
   render() {
+    ////need refactor
     const seconds = this.state.seconds.toString().split('');
     let third = seconds[0] !== undefined ? seconds[0] : 0;
     let first = seconds[2] !== undefined ? seconds[2] : 0;
@@ -90,12 +91,38 @@ class Header extends Component {
       second = seconds[1] !== undefined ? seconds[1] : 0;
     }
 
+    const flagsLeft = this.state.flagsLeft.toString().split('');
+    let flagDigit1 = 0;
+    let flagDigit2 = 0;
+    let flagDigit3 = 0;
+
+    if (flagsLeft.length === 1) {
+      flagDigit3 = flagsLeft[0] !== undefined ? flagsLeft[0] : 0;
+      flagDigit1 = 0;
+      flagDigit2 = 0;
+    }
+
+    if (flagsLeft.length === 2) {
+      flagDigit3 = flagsLeft[1] !== undefined ? flagsLeft[1] : 0;
+      flagDigit1 = 0;
+      flagDigit2 = flagsLeft[0] !== undefined ? flagsLeft[0] : 0;
+    }
+
+    if (flagsLeft.length === 3) {
+      flagDigit3 = flagsLeft[2] !== undefined ? flagsLeft[2] : 0;
+
+      flagDigit1 = flagsLeft[0] !== undefined ? flagsLeft[0] : 0;
+      flagDigit2 = flagsLeft[1] !== undefined ? flagsLeft[1] : 0;
+    }
+    if (flagsLeft.findIndex(num => num === '-') !== -1) {
+      flagDigit1 = '-';
+    }
     return (
       <StyledHeader>
         <DigitsContainer>
-          <Digit digit={0} />
-          <Digit digit={2} />
-          <Digit digit={1} />
+          <Digit digit={flagDigit1} />
+          <Digit digit={flagDigit2} />
+          <Digit digit={flagDigit3} />
         </DigitsContainer>
         <SmilePlaceholder />
         <DigitsContainer>
@@ -108,4 +135,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default ScoreBoard;
