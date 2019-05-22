@@ -56,14 +56,27 @@ const OpenedCell = styled(StyledCell)`
   color: ${props => colors[`${props.neigbours}`]};
 `;
 
-const Cell = ({ hasMine, hasFlag, isOpened, neighbourMineCount, row, col, leftClick }) => {
+const Cell = ({
+  hasMine,
+  hasFlag,
+  isOpened,
+  neighbourMineCount,
+  row,
+  col,
+  leftClick,
+  rightClick,
+}) => {
   let neigbours = hasMine || neighbourMineCount === 0 ? null : neighbourMineCount;
   let cell = isOpened ? (
     <OpenedCell neigbours={neigbours} hasMine={hasMine}>
       {neigbours}
     </OpenedCell>
   ) : (
-    <ClosedCell hasFlag={hasFlag} onClick={() => leftClick(row, col)} />
+    <ClosedCell
+      hasFlag={hasFlag}
+      onClick={() => leftClick(row, col)}
+      onContextMenu={event => rightClick(event, row, col)}
+    />
   );
   return cell;
 };

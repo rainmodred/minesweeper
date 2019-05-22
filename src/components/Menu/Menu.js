@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import difficulties from '../../difficulties';
 
 const StyledMenu = styled.div`
   display: ${props => (props.visible ? '' : 'none')};
@@ -12,6 +13,7 @@ const StyledMenu = styled.div`
   user-select: none;
   font-family: Arial, serif;
 `;
+
 const MenuHeader = styled.div`
   display: flex;
   color: #fff;
@@ -25,11 +27,10 @@ const MenuBody = styled.div`
   display: flex;
   justify-content: center;
   padding: 3px;
-  background-color: #dddddd;
+  background-color: #eeeeee;
   table {
     border-collapse: collapse;
   }
-
   th,
   td {
     padding: 3px 3px;
@@ -50,6 +51,9 @@ const NewGameButton = styled.span`
   padding: 2px 6px;
   color: #fff;
   border: 1px solid #444444;
+  :active {
+    background-color: #0066aa;
+  }
 `;
 
 class Menu extends Component {
@@ -63,9 +67,17 @@ class Menu extends Component {
       selectedOption: event.target.value,
     });
   };
+
+  handleNewGameClick = () => {
+    const { newGameClick } = this.props;
+    const { selectedOption } = this.state;
+    newGameClick(difficulties[selectedOption]);
+  };
+
   render() {
     const { visible, closeMenu } = this.props;
     const { selectedOption } = this.state;
+    const { handleNewGameClick, handleDifficultyChange } = this;
 
     return (
       <StyledMenu visible={visible}>
@@ -88,7 +100,7 @@ class Menu extends Component {
                   <label>
                     <input
                       type="radio"
-                      onChange={this.handleDifficultyChange}
+                      onChange={handleDifficultyChange}
                       checked={selectedOption === 'Beginner'}
                       value="Beginner"
                     />
@@ -104,7 +116,7 @@ class Menu extends Component {
                   <label>
                     <input
                       type="radio"
-                      onChange={this.handleDifficultyChange}
+                      onChange={handleDifficultyChange}
                       checked={selectedOption === 'Intermediate'}
                       value="Intermediate"
                     />
@@ -120,7 +132,7 @@ class Menu extends Component {
                   <label>
                     <input
                       type="radio"
-                      onChange={this.handleDifficultyChange}
+                      onChange={handleDifficultyChange}
                       checked={selectedOption === 'Expert'}
                       value="Expert"
                     />
@@ -135,7 +147,14 @@ class Menu extends Component {
           </table>
         </MenuBody>
         <MenuFooter>
-          <NewGameButton>New game</NewGameButton>
+          <NewGameButton
+            onClick={() => {
+              handleNewGameClick();
+              closeMenu();
+            }}
+          >
+            New game
+          </NewGameButton>
         </MenuFooter>
       </StyledMenu>
     );

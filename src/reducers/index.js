@@ -1,17 +1,10 @@
 import { combineReducers } from 'redux';
-import gameReducer from './game';
+import scoreBoard from './scoreBoard';
 import gridReducer from './grid';
-
-// const rootReducer = (state, action) => {
-//   return {
-//     game: gameReducer(state, action),
-//     grid: gridReducer(state, action),
-//   };
-// };
-
-// export default rootReducer;
+import game from './game';
 
 export default combineReducers({
-  game: gameReducer,
+  score: scoreBoard,
   grid: gridReducer,
+  game,
 });
