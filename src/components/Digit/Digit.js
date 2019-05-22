@@ -20,6 +20,8 @@ function numberToSSD(num) {
     '7': [false, false, true, false, false, true, true],
     '8': [true, true, true, true, true, true, true],
     '9': [true, false, true, true, true, true, true],
+
+    '-': [false, false, false, true, false, false, false],
   };
   return segmentsArray[num];
 }
@@ -101,13 +103,6 @@ const Digit = ({ digit }) => {
   ];
   return (
     <Container>
-      {/* <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 49.3 92.7"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {segments}
-      </svg> */}
       <svg viewBox="0 0 49.3 92.7" preserveAspectRatio="xMidYMid meet">
         {segments}
       </svg>
