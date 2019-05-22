@@ -39,7 +39,7 @@ class Game extends Component {
 
   handleNewGameClick = difficulty => {
     const { onNewGame } = this.props;
-    console.log(difficulty);
+
     onNewGame(difficulty);
   };
 

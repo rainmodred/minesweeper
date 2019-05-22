@@ -62,7 +62,6 @@ class Menu extends Component {
   };
 
   handleDifficultyChange = event => {
-    console.log(event.currentTarget.value);
     this.setState({
       selectedOption: event.target.value,
     });

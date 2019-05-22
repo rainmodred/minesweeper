@@ -43,7 +43,6 @@ class Grid extends Component {
     } = this.props;
 
     if (width * height - difficulty.minesQuantity === openedCells && !gameWon) {
-      console.log('won');
       onGameWon();
       onRevealMines();
     }

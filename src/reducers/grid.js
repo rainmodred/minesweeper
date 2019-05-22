@@ -5,9 +5,7 @@ import {
   TOGGLE_FLAG,
   REVEAL_MINES,
 } from '../actions/grid';
-import Cell from '../components/Cell/Cell';
 
-//need refactor
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
@@ -77,41 +75,6 @@ function findNeighbourMineCount(grid, row, col) {
   return neighbourMineCount;
 }
 
-function openCell(grid, row, col) {
-  let cell = grid[row][col];
-
-  if (cell.isOpened || cell.hasFlag) {
-    return grid;
-  }
-
-  if (cell.hasMine) {
-    cell.isOpened = true;
-    //gameover
-    return grid.map(row =>
-      row.map(cell => {
-        if (cell.hasMine && !cell.isOpened) {
-          cell.isOpened = true;
-        }
-        return cell;
-      })
-    );
-  }
-
-  if (cell.neighbourMineCount > 0) {
-    cell.isOpened = true;
-    //checkwin
-    return grid;
-  }
-
-  if (cell.neighbourMineCount === 0) {
-    //debugger;
-    cell.isOpened = true;
-    floodFill(grid, cell);
-
-    return grid;
-  }
-}
-
 //queue flood fill
 function floodFill(grid, cell) {
   const que = [];
@@ -131,7 +94,6 @@ function floodFill(grid, cell) {
         if (grid[row][col - 1].isOpened === false && grid[row][col - 1].hasFlag === false) {
           grid[row][col - 1].isOpened = true;
           que.push(grid[row][col - 1]);
-          // openedCells++;
         }
       } else {
         if (grid[row][col - 1].isOpened === false) {
@@ -146,7 +108,6 @@ function floodFill(grid, cell) {
         if (grid[row][col + 1].isOpened === false && grid[row][col + 1].hasFlag === false) {
           grid[row][col + 1].isOpened = true;
           que.push(grid[row][col + 1]);
-          // openedCells++;
         }
       } else {
         if (grid[row][col + 1].isOpened === false) {
@@ -161,7 +122,6 @@ function floodFill(grid, cell) {
         if (grid[row - 1][col].isOpened === false && grid[row - 1][col].hasFlag === false) {
           grid[row - 1][col].isOpened = true;
           que.push(grid[row - 1][col]);
-          // openedCells++;
         }
       } else {
         if (grid[row - 1][col].isOpened === false) {
@@ -176,7 +136,6 @@ function floodFill(grid, cell) {
         if (grid[row + 1][col].isOpened === false && grid[row + 1][col].hasFlag === false) {
           grid[row + 1][col].isOpened = true;
           que.push(grid[row + 1][col]);
-          // openedCells++;
         }
       } else {
         if (grid[row + 1][col].isOpened === false) {
@@ -233,8 +192,7 @@ const gridReducer = (state = initialState, action) => {
       };
     case OPEN_MULTIPLE_CELLS:
       const { grid, openedCells } = floodFill(state.grid, action.payload.cell);
-      const openedCellsCount = grid.map(row => row.filter(cell => cell.isOpened));
-      console.log(openedCellsCount);
+
       return { ...state, grid: grid, openedCells: state.openedCells + openedCells };
     case REVEAL_MINES:
       return { ...state, grid: revealMines(copy2dArray(state.grid)) };
