@@ -1,7 +1,7 @@
-import React from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import React from "react";
+import styled, { createGlobalStyle } from "styled-components";
 
-import Game from './components/Game/Game';
+import Game from "./components/Game";
 
 const Container = styled.div`
   display: flex;
@@ -23,7 +23,8 @@ function App() {
   return (
     <Container>
       <GlobalStyle />
-      <Game />
+
+      {/* <Game /> */}
     </Container>
   );
 }

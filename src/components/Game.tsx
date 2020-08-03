@@ -1,13 +1,13 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import styled from 'styled-components';
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import styled from "styled-components";
 
-import Grid from '../Grid/Grid';
-import ScoreBoard from '../ScoreBoard/ScoreBoard';
-import Menu from '../Menu/Menu';
+import Grid from "./Grid";
+import ScoreBoard from "./ScoreBoard";
+import Menu from "./Menu";
 
-import { createGrid } from '../../actions/grid';
-import { newGame } from '../../actions/game';
+import { createGrid } from "../actions/grid";
+import { newGame } from "../actions/game";
 
 const Container = styled.div`
   display: inline-block;
@@ -37,7 +37,7 @@ class Game extends Component {
     menuVisible: false,
   };
 
-  handleNewGameClick = difficulty => {
+  handleNewGameClick = (difficulty) => {
     const { onNewGame } = this.props;
 
     onNewGame(difficulty);
@@ -48,7 +48,13 @@ class Game extends Component {
   };
   render() {
     const { handleMenuClick, handleNewGameClick } = this;
-    const { flagsLeft, gameStarted, gameOver, gameWon, difficulty } = this.props;
+    const {
+      flagsLeft,
+      gameStarted,
+      gameOver,
+      gameWon,
+      difficulty,
+    } = this.props;
     return (
       <Fragment>
         <Container>
@@ -74,7 +80,14 @@ class Game extends Component {
 }
 
 const mapStateToProps = ({
-  game: { gameOver, gameStarted, difficulty, flagsLeft, gameWon, currentDifficulty },
+  game: {
+    gameOver,
+    gameStarted,
+    difficulty,
+    flagsLeft,
+    gameWon,
+    currentDifficulty,
+  },
 }) => {
   return {
     gameStarted,
@@ -86,14 +99,12 @@ const mapStateToProps = ({
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onCreateGrid: (height, width, minesCount) => dispatch(createGrid(height, width, minesCount)),
-    onNewGame: difficulty => dispatch(newGame(difficulty)),
+    onCreateGrid: (height, width, minesCount) =>
+      dispatch(createGrid(height, width, minesCount)),
+    onNewGame: (difficulty) => dispatch(newGame(difficulty)),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Game);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

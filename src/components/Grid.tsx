@@ -1,20 +1,25 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import styled from 'styled-components';
-import Cell from '../Cell/Cell';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import styled from "styled-components";
+import Cell from "./Cell";
 import {
   createGrid,
   openOneCell,
   toggleFlag,
   revealMines,
   openMultipleCells,
-} from '../../actions/grid';
-import { startGame, gameOver, gameWon, changeFlagsCount } from '../../actions/game';
+} from "../actions/grid";
+import {
+  startGame,
+  gameOver,
+  gameWon,
+  changeFlagsCount,
+} from "../actions/game";
 
 const Container = styled.div`
   display: grid;
-  grid-template: repeat(${props => parseInt(props.height)}, 24px) / repeat(
-      ${props => parseInt(props.width)},
+  grid-template: repeat(${(props) => parseInt(props.height)}, 24px) / repeat(
+      ${(props) => parseInt(props.width)},
       24px
     );
   margin: 0 auto;
@@ -95,8 +100,8 @@ class Grid extends Component {
   render() {
     const { height, width } = this.props.difficulty;
 
-    let grid = this.props.grid.map(row =>
-      row.map(cell => {
+    let grid = this.props.grid.map((row) =>
+      row.map((cell) => {
         return (
           <Cell
             key={cell.id}
@@ -136,20 +141,18 @@ const mapStateToProps = ({
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    createGrid: (height, width, minesCount) => dispatch(createGrid(height, width, minesCount)),
+    createGrid: (height, width, minesCount) =>
+      dispatch(createGrid(height, width, minesCount)),
     onCellLeftClick: (row, col) => dispatch(openOneCell(row, col)),
     onCellRightClick: (row, col) => dispatch(toggleFlag(row, col)),
     onOpenMultipleCells: (row, col) => dispatch(openMultipleCells(row, col)),
-    onChangeFlagsCount: number => dispatch(changeFlagsCount(number)),
+    onChangeFlagsCount: (number) => dispatch(changeFlagsCount(number)),
     onStartGame: () => dispatch(startGame()),
     onGameOver: () => dispatch(gameOver()),
     onGameWon: () => dispatch(gameWon()),
     onRevealMines: () => dispatch(revealMines()),
   };
 };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Grid);
+export default connect(mapStateToProps, mapDispatchToProps)(Grid);

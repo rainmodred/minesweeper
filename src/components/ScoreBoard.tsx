@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
+import React, { Component } from "react";
+import styled from "styled-components";
 
-import Digit from '../Digit/Digit';
-import face1 from '../../assets/face1.png';
-import face3 from '../../assets/face3.png';
-import face4 from '../../assets/face4.png';
+import Digit from "./Digit";
+import face1 from "../../assets/face1.png";
+import face3 from "../../assets/face3.png";
+import face4 from "../../assets/face4.png";
 
 const StyledScoreBoard = styled.div`
   display: flex;
@@ -38,12 +38,13 @@ const Smile = styled.div`
   border-left: 4px solid #fff;
   border-bottom: 5px solid #808080;
   border-right: 5px solid #808080;
-  background: url('${props => (props.gameWon ? face3 : props.gameOver ? face4 : face1)}')no-repeat;
+  background: url('${(props) =>
+    props.gameWon ? face3 : props.gameOver ? face4 : face1}')no-repeat;
   background-size: 30px;
   background-position: center;
   &:active {
     border-top: 4px solid #808080;
-    border-left: 4px solid #808080;  
+    border-left: 4px solid #808080;
     border-bottom: 2px solid #808080;
     border-right: 2px solid #808080;
   }
@@ -62,7 +63,7 @@ class ScoreBoard extends Component {
   startTimer = () => {
     this.interval = setInterval(
       () =>
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return prevState.seconds++;
         }),
       1000
@@ -93,23 +94,23 @@ class ScoreBoard extends Component {
   }
   splitNumToDigits(num) {
     if (num > 999) return [9, 9, 9];
-    if (num < -99) return ['-', 9, 9];
-    const splitedNum = num.toString().split('');
+    if (num < -99) return ["-", 9, 9];
+    const splitedNum = num.toString().split("");
     if (splitedNum.length < 3) {
       while (splitedNum.length !== 3) {
         splitedNum.unshift(0);
       }
     }
-    if (splitedNum[1] === '-') {
+    if (splitedNum[1] === "-") {
       splitedNum[1] = 0;
-      splitedNum[0] = '-';
+      splitedNum[0] = "-";
     }
     return splitedNum;
   }
 
-  renderDigits = arr => {
+  renderDigits = (arr) => {
     //fix keys
-    return arr.map(digit => {
+    return arr.map((digit) => {
       this.id++;
       return <Digit key={this.id} digit={digit} />;
     });
@@ -129,9 +130,17 @@ class ScoreBoard extends Component {
 
     return (
       <StyledScoreBoard>
-        <DigitsContainer>{renderDigits(splitNumToDigits(flagsLeft))}</DigitsContainer>
-        <Smile onClick={handleNewGameClick} gameOver={gameOver} gameWon={gameWon} />
-        <DigitsContainer>{renderDigits(splitNumToDigits(seconds))}</DigitsContainer>
+        <DigitsContainer>
+          {renderDigits(splitNumToDigits(flagsLeft))}
+        </DigitsContainer>
+        <Smile
+          onClick={handleNewGameClick}
+          gameOver={gameOver}
+          gameWon={gameWon}
+        />
+        <DigitsContainer>
+          {renderDigits(splitNumToDigits(seconds))}
+        </DigitsContainer>
       </StyledScoreBoard>
     );
   }
