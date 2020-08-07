@@ -23,6 +23,7 @@ interface GameboardProps {
   height: number;
   width: number;
   gameboard: Cell[][] | null;
+  leftClick: (row: number, col: number) => void;
 }
 
 interface ContainerProps {
@@ -47,7 +48,12 @@ const Container = styled.div<ContainerProps>`
 // todo
 // event delegation
 // grid on click not cell
-const Gameboard: React.FC<GameboardProps> = ({ height, width, gameboard }) => {
+const Gameboard: React.FC<GameboardProps> = ({
+  height,
+  width,
+  gameboard,
+  leftClick,
+}) => {
   function renderGameboard() {
     if (gameboard === null) {
       return null;
@@ -58,11 +64,10 @@ const Gameboard: React.FC<GameboardProps> = ({ height, width, gameboard }) => {
         <Field
           key={cell.id}
           hasMine={cell.hasMine}
-          hasFlag={cell.hasFlag}
-          isOpened={cell.isOpened}
+          state={cell.state}
           row={cell.row}
           col={cell.col}
-          minesAround={cell.minesAround}
+          value={cell.value}
         />
       ))
     );
@@ -73,6 +78,7 @@ const Gameboard: React.FC<GameboardProps> = ({ height, width, gameboard }) => {
 
     const { row, col } = cell?.dataset;
     if (row && col) {
+      leftClick(+row, +col);
     }
   }
 

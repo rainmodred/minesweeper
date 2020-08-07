@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import bomb from '../images/bomb.png';
 import flag from '../images/flag.png';
+import { CellState } from '../core/Cell';
 
 type Colors = {
   [key: number]: string;
@@ -35,7 +36,7 @@ const StyledField = styled.div`
 `;
 
 interface ClosedFieldProps {
-  hasFlag: boolean;
+  flagged: boolean;
 }
 
 const ClosedField = styled(StyledField)<ClosedFieldProps>`
@@ -44,7 +45,7 @@ const ClosedField = styled(StyledField)<ClosedFieldProps>`
   border-bottom: 3px solid #808080;
   border-right: 3px solid #808080;
 
-  background-image: url('${(props) => (props.hasFlag ? flag : null)}');
+  background-image: url('${(props) => (props.flagged ? flag : null)}');
   background-repeat: no-repeat;
   background-size: 65%;
   background-position: center;
@@ -72,39 +73,30 @@ const OpenedField = styled(StyledField)<OpenedFieldProps>`
 `;
 
 interface FieldProps {
-  hasFlag: boolean;
+  state: CellState;
   hasMine: boolean;
-  isOpened: boolean;
   row: number;
   col: number;
-  minesAround: number;
-  leftClick?: () => {};
-  rightClick?: () => {};
+  value: number;
 }
 
-const Field: React.FC<FieldProps> = ({
-  hasFlag,
-  hasMine,
-  isOpened,
-  row,
-  col,
-  minesAround,
-}) => {
-  const color = getColor(minesAround);
+const Field: React.FC<FieldProps> = ({ state, hasMine, row, col, value }) => {
+  const color = getColor(value);
 
-  const field = isOpened ? (
-    <OpenedField color={color} hasMine={hasMine}>
-      {minesAround}
-    </OpenedField>
-  ) : (
-    <ClosedField
-      hasFlag={hasFlag}
-      data-row={row}
-      data-col={col}
-      // onClick={() => leftClick(row, col)}
-      // onContextMenu={(event) => rightClick(event, row, col)}
-    />
-  );
+  const field =
+    state === CellState.opened ? (
+      <OpenedField color={color} hasMine={hasMine}>
+        {value > 0 && value}
+      </OpenedField>
+    ) : (
+      <ClosedField
+        flagged={state === CellState.flagged}
+        data-row={row}
+        data-col={col}
+        // onClick={() => leftClick(row, col)}
+        // onContextMenu={(event) => rightClick(event, row, col)}
+      />
+    );
 
   return field;
 };

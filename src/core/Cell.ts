@@ -1,3 +1,9 @@
+export enum CellState {
+  opened,
+  closed,
+  flagged
+}
+
 export default class Cell {
   id: number;
 
@@ -5,40 +11,61 @@ export default class Cell {
 
   col: number;
 
-  isOpened: boolean;
+  state: CellState;
 
   hasMine: boolean;
 
-  hasFlag: boolean;
-
-  minesAround: number;
+  value: number;
 
   constructor(id: number,
     row: number,
     col: number,
-    isOpened: boolean,
-    hasMine: boolean,
-    hasFlag: boolean,
-    minesAroud: number) {
+  ) {
 
     this.id = id;
     this.row = row;
     this.col = col;
-    this.isOpened = isOpened;
-    this.hasMine = hasMine;
-    this.hasFlag = hasFlag;
-    this.minesAround = minesAroud;
+    this.state = CellState.closed;
+    this.hasMine = false;
+    this.value = 0;
+  }
+
+  isFlagged() {
+    return this.state === CellState.flagged;
+  }
+
+  isOpened() {
+    return this.state === CellState.opened;
+  }
+
+  toggleFlag() {
+    if (this.state === CellState.flagged) {
+      this.state = CellState.closed;
+    } else {
+      this.state = CellState.flagged;
+    }
+  }
+
+  getValue() {
+    return this.value;
+  }
+
+  setValue(newValue: number) {
+    this.value = newValue;
+  }
+
+  setState(newState: CellState) {
+    this.state = newState;
   }
 
   setMine() {
     this.hasMine = true;
   }
 
-  removeMine() {
-    this.hasMine = false;
+  openCell() {
+    if (this.state === CellState.closed) {
+      this.state = CellState.opened;
+    }
   }
 
-  setMinesAround(amount: number) {
-    this.minesAround = amount;
-  }
 }

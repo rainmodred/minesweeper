@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import GameBoard from './Gameboard';
 import Grid from '../core/Grid';
 import Cell from '../core/Cell';
+
 // import { connect } from 'react-redux';
 
 // import ScoreBoard from './ScoreBoard';
@@ -35,21 +36,34 @@ const StyledButton = styled.span`
   user-select: none;
 `;
 
+const grid = new Grid(9, 9, 10);
+
 const Game: React.FC = () => {
-  const [gameboard, setGameboard] = useState<Cell[][] | null>(null);
+  const [gameboard, setGameboard] = useState<Cell[][] | null>(grid.matrix);
 
   useEffect(() => {
-    const grid = new Grid(9, 9, 10);
-    setGameboard(grid.matrix);
+    grid.print();
   }, []);
 
-  function handleFieldClick(row,col) {
-    grid.
+  function handleGameboardLeftClick(row: number, col: number) {
+    const result = grid.openCell(row, col);
+    console.log(result);
+    console.log(grid.print());
+    if (result) {
+      const newGrid = grid.matrix.slice();
+
+      setGameboard(newGrid);
+    }
   }
 
   return (
     <Container>
-      <GameBoard height={9} width={9} gameboard={gameboard} fieldClick={handleFieldClick} />
+      <GameBoard
+        height={9}
+        width={9}
+        gameboard={gameboard}
+        leftClick={handleGameboardLeftClick}
+      />
     </Container>
   );
 };
