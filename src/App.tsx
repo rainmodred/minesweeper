@@ -1,7 +1,7 @@
-import React from "react";
-import styled, { createGlobalStyle } from "styled-components";
+import React from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
 
-import Game from "./components/Game";
+import Game from './components/Game';
 
 const Container = styled.div`
   display: flex;
@@ -15,18 +15,17 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: inherit;
   }
   body {
-    box-sizing: border-box;      
+    box-sizing: border-box;
   }
 `;
 
-function App() {
+const App: React.FC = () => {
   return (
     <Container>
       <GlobalStyle />
-
-      {/* <Game /> */}
+      <Game />
     </Container>
   );
-}
+};
 
 export default App;
