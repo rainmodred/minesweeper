@@ -46,8 +46,8 @@ const Game: React.FC = () => {
   }, []);
 
   function handleGameboardLeftClick(row: number, col: number) {
-    const result = grid.openCell(row, col);
-    console.log(result);
+    const result = grid.showCell(row, col);
+
     console.log(grid.print());
     if (result) {
       const newGrid = grid.matrix.slice();

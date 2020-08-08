@@ -127,7 +127,12 @@ export default class Grid {
   }
 
   openCell(row: number, col: number) {
-    const cell = this.matrix[row][col];
+    const cell = this.getCell(row, col);
+    cell.openCell();
+  }
+
+  showCell(row: number, col: number) {
+    const cell = this.getCell(row, col);
 
     if (cell.state === CellState.opened || cell.state === CellState.flagged) {
       return false;
@@ -159,50 +164,43 @@ export default class Grid {
     while (que.length !== 0) {
       const { row, col } = que.shift()!;
       openedCells++;
+
       // WEST
       if (col - 1 >= 0 && col < width) {
-        if (this.getValue(row, col - 1) === 0) {
-          if (!this.isOpened(row, col - 1) && !this.isFlagged(row, col - 1)) {
-            this.openCell(row, col - 1);
-            que.push(this.getCell(row, col - 1));
-          }
-        } else if (!this.isOpened(row, col - 1)) {
+        if (this.getValue(row, col - 1) === 0 && !this.isOpened(row, col - 1) && !this.isFlagged(row, col - 1)) {
+          this.openCell(row, col - 1);
+          que.push(this.getCell(row, col - 1));
+        } else {
           this.openCell(row, col - 1);
           openedCells++;
         }
       }
       // EAST
       if (col >= 0 && col + 1 < width) {
-        if (this.getValue(row, col + 1) === 0) {
-          if (!this.isOpened(row, col + 1) && !this.isFlagged(row, col + 1)) {
-            this.openCell(row, col + 1);
-            que.push(this.getCell(row, col + 1));
-          }
-        } else if (!this.isOpened(row, col + 1)) {
+        if (this.getValue(row, col + 1) === 0 && !this.isOpened(row, col + 1) && !this.isFlagged(row, col + 1)) {
+          this.openCell(row, col + 1);
+          que.push(this.getCell(row, col + 1));
+        } else {
           this.openCell(row, col + 1);
           openedCells++;
         }
       }
       // NORTH
       if (row - 1 >= 0 && row < height) {
-        if (this.getValue(row - 1, col) === 0) {
-          if (!this.isOpened(row - 1, col) && !this.isFlagged(row - 1, col)) {
-            this.openCell(row - 1, col);
-            que.push(this.getCell(row - 1, col));
-          }
-        } else if (!this.isOpened(row - 1, col)) {
+        if (this.getValue(row - 1, col) === 0 && !this.isOpened(row - 1, col) && !this.isFlagged(row - 1, col)) {
+          this.openCell(row - 1, col);
+          que.push(this.getCell(row - 1, col));
+        } else {
           this.openCell(row - 1, col);
           openedCells++;
         }
       }
       // SOUTH
       if (row >= 0 && row + 1 < height) {
-        if (this.getValue(row + 1, col) === 0) {
-          if (!this.isOpened(row + 1, col) && !this.isFlagged(row + 1, col)) {
-            this.openCell(row + 1, col);
-            que.push(this.getCell(row + 1, col));
-          }
-        } else if (!this.isOpened(row + 1, col)) {
+        if (this.getValue(row + 1, col) === 0 && !this.isOpened(row + 1, col) && !this.isFlagged(row + 1, col)) {
+          this.openCell(row + 1, col);
+          que.push(this.getCell(row + 1, col));
+        } else {
           this.openCell(row + 1, col);
           openedCells++;
         }
