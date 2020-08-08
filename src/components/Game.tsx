@@ -4,14 +4,9 @@ import styled from 'styled-components';
 import GameBoard from './Gameboard';
 import Grid from '../core/Grid';
 import Cell from '../core/Cell';
-
-// import { connect } from 'react-redux';
-
-// import ScoreBoard from './ScoreBoard';
-// import Menu from './Menu';
-
-// import { createGrid } from '../actions/grid';
-// import { newGame } from '../actions/game';
+import ScoreBoard from './ScoreBoard';
+import Menu from './Menu';
+import { Difficulty, difficulties } from '../difficulties';
 
 const Container = styled.div`
   display: inline-block;
@@ -36,14 +31,35 @@ const StyledButton = styled.span`
   user-select: none;
 `;
 
-const grid = new Grid(9, 9, 10);
+enum gameState {
+  gameOver,
+  gameWon,
+}
+
+let grid = new Grid(9, 9, 10);
 
 const Game: React.FC = () => {
   const [gameboard, setGameboard] = useState<Cell[][] | null>(grid.matrix);
+  const [flagsLeft, setFlagsLeft] = useState(10);
+  const [gameOver, setGameOver] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [currentDifficulty, setCurrentDifficulty] = useState(
+    difficulties.Beginner
+  );
+  const [menuVisibility, setMenuVisibility] = useState(false);
 
   useEffect(() => {
     grid.print();
   }, []);
+
+  function finishGame(state: string) {
+    if (state === 'lost') {
+      setGameOver(true);
+      grid.reveal();
+      setGameboard(grid.matrix);
+    }
+  }
 
   function handleGameboardLeftClick(target: EventTarget) {
     const cell = target as HTMLElement;
@@ -52,7 +68,13 @@ const Game: React.FC = () => {
 
       if (row && col) {
         const result = grid.showCell(+row, +col);
+        if (result == null) {
+          return;
+        }
         if (result) {
+          finishGame('lost');
+        }
+        if (!result) {
           setGameboard(grid.matrix.slice());
         }
       }
@@ -65,14 +87,44 @@ const Game: React.FC = () => {
       const { row, col } = cell?.dataset!;
 
       if (row && col) {
+        setFlagsLeft(flagsLeft - 1);
         grid.toggleFlag(+row, +col);
         setGameboard(grid.matrix.slice());
       }
     }
   }
 
+  function handleNewGame(difficulty: Difficulty) {
+    setCurrentDifficulty(difficulty);
+    setGameOver(false);
+    setGameWon(false);
+    setGameStarted(false);
+    setFlagsLeft(difficulty.minesQuantity);
+    grid = new Grid(
+      currentDifficulty.height,
+      currentDifficulty.width,
+      currentDifficulty.minesQuantity
+    );
+    setGameboard(grid.matrix.slice());
+  }
+
   return (
     <Container>
+      <Menu
+        visible={menuVisibility}
+        onCloseMenu={() => setMenuVisibility(!menuVisibility)}
+        onNewGame={handleNewGame}
+      />
+      <StyledButton onClick={() => setMenuVisibility(!menuVisibility)}>
+        Settings
+      </StyledButton>
+      <ScoreBoard
+        difficulty={currentDifficulty}
+        flagsLeft={flagsLeft}
+        gameOver={gameOver}
+        gameWon={gameWon}
+        onNewGame={handleNewGame}
+      />
       <GameBoard
         height={9}
         width={9}
@@ -80,8 +132,6 @@ const Game: React.FC = () => {
         leftClick={handleGameboardLeftClick}
         rightClick={handleGameboardRightClick}
       />
-
-      <Digit />
     </Container>
   );
 };

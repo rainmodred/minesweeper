@@ -1,4 +1,4 @@
-import difficulties from '../difficulties';
+import { difficulties } from '../difficulties';
 
 
 export default class Game {

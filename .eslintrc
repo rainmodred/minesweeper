@@ -58,6 +58,7 @@
       }
     ],
     "react/jsx-props-no-spreading": "off",
+    "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
     "react/jsx-boolean-value": "off",
     "react/prop-types": "off",

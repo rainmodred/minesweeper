@@ -1,10 +1,12 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import face1 from '../images/face1.png';
 import face2 from '../images/face2.png';
 import face3 from '../images/face3.png';
 import face4 from '../images/face4.png';
+import Digit from './Digit';
+import { Difficulty } from '../difficulties';
 
 const StyledScoreBoard = styled.div`
   display: flex;
@@ -55,19 +57,74 @@ const Smile = styled.div<SmileProps>`
   }
 `;
 
-const ScoreBoard: React.FC = () => {
+interface ScoreBoardProps {
+  difficulty: Difficulty;
+  flagsLeft: number;
+  gameOver: boolean;
+  gameWon: boolean;
+  gameStarted: boolean;
+  onNewGame: (difficulty: Difficulty) => void;
+}
+
+const ScoreBoard: React.FC<ScoreBoardProps> = ({
+  difficulty,
+  flagsLeft,
+  gameOver,
+  gameWon,
+  gameStarted,
+  onNewGame,
+}) => {
   const [seconds, setSeconds] = useState(0);
   const [isOn, setIsOn] = useState(false);
+  const [timerId, setTimerId] = useState(0);
+
+  function renderDigits(arr: string[]) {
+    return arr.map((digit, index) => {
+      return <Digit key={`D${index}`} digit={digit} />;
+    });
+  }
+
+  function splitNumToDigits(num: number): string[] {
+    if (num > 999) return ['9', '9', '9'];
+    if (num < -99) return ['-', '9', '9'];
+    const splitedNum = num.toString().split('');
+    if (splitedNum.length < 3) {
+      while (splitedNum.length !== 3) {
+        splitedNum.unshift('0');
+      }
+    }
+    if (splitedNum[1] === '-') {
+      splitedNum[1] = '0';
+      splitedNum[0] = '-';
+    }
+    return splitedNum;
+  }
+
+  function handleNewGameClick() {
+    clearInterval(timerId);
+    setSeconds(0);
+    setIsOn(false);
+    onNewGame(difficulty);
+  }
 
   function startTimer() {
-    this.interval = setInterval(
-      () =>
-        this.setState((prevState) => {
-          return prevState.seconds++;
-        }),
-      1000
+    setTimerId(
+      setInterval(() => {
+        setSeconds(seconds + 1);
+      }, 1000)
     );
   }
+
+  // useffect gameStarted start timer
+  useEffect(() => {
+    startTimer();
+  }, [gameStarted]);
+
+  useEffect(() => {
+    return () => clearInterval(timerId);
+  });
+
+  useEffect(() => {}, [gameOver, gameWon]);
 
   return (
     <StyledScoreBoard>
@@ -75,7 +132,7 @@ const ScoreBoard: React.FC = () => {
         {renderDigits(splitNumToDigits(flagsLeft))}
       </DigitsContainer>
       <Smile
-        // onClick={handleNewGameClick}
+        onClick={handleNewGameClick}
         gameOver={gameOver}
         gameWon={gameWon}
       />
@@ -86,103 +143,4 @@ const ScoreBoard: React.FC = () => {
   );
 };
 
-// class ScoreBoard extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       seconds: 0,
-//       isOn: false,
-//     };
-//     this.id = 0;
-//   }
-
-//   startTimer = () => {
-//     this.interval = setInterval(
-//       () =>
-//         this.setState((prevState) => {
-
-//          return prevState.seconds++;
-//         }),
-//       1000
-//     );
-//   };
-//   componentDidUpdate() {
-//     const { gameStarted, gameOver, gameWon } = this.props;
-//     const { isOn } = this.state;
-
-//     if (!gameStarted && !gameOver && !gameWon && isOn) {
-//       clearInterval(this.interval);
-//       this.setState({ seconds: 0, isOn: false });
-//     }
-//     if (gameStarted && !isOn) {
-//       this.setState({
-//         isOn: !isOn,
-//       });
-
-//       clearInterval(this.interval);
-//       this.startTimer();
-//     }
-//     i
-// f (gameOver || gameWon) {
-//       clearInterval(this.interval);
-
-//    }
-//   }
-//   componentWillMount() {
-//     clearInterval(this.interval);
-//   }
-//   splitNumToDigits('-') {
-//     if (num > 999) return [9, 9, 9];
-//     if (num ''-99) return ["-", 9, 9];
-//     const splitedNum = num.toString().split("");
-//     if (splitedNum.length < 3) {
-//       while (splitedNum.length !== 3) {
-// '-'     splitedNum.unshift(0);
-//       }
-//     }
-//     if (s'-'tedNum[1] === "-") {
-//       splitedNum[1] = 0;
-//       splitedNum[0] = "- ";
-//     }
-//     return splitedNum;
-//   }
-
-//   renderDigits = (arr) => {
-//     //fix keys
-//     return arr.map((digit) => {
-//       this.id++;
-//       return <Digit key={this.id} digit={digit} />;
-//     });
-//   };
-
-//   handleNewGameClick = () => {
-//     const { newGameClick, difficulty } = this.props;
-//     clearInterval(this.interval);
-//     this.setState({ seconds: 0, isOn: false });
-//     newGameClick(difficulty);
-//   };
-
-//   render() {
-//     const { flagsLeft, gameOver, gameWon } = this.props;
-//     const { seconds } = this.state;
-//     const { splitNumToDigits, renderDigits, handleNewGameClick } = this;
-
-//     return (
-//       <StyledScoreBoard>
-//         <DigitsContainer>
-//           {renderDigits(splitNumToDigits(flagsLeft))}
-//         </DigitsContainer>
-//         <Smile
-//           onClick={handleNewGameClick}
-//           gameOver={gameOver}
-//           gameWon={gameWon}
-//         />
-//         <DigitsContainer>
-//           {renderDigits(splitNumToDigits(seconds))}
-//         </DigitsContainer>
-//       </StyledScoreBoard>
-//     );
-//   }
-// }
-
-// export default ScoreBoard;
+export default ScoreBoard;

@@ -135,12 +135,11 @@ export default class Grid {
     const cell = this.getCell(row, col);
 
     if (cell.state === CellState.opened || cell.state === CellState.flagged) {
-      return false;
+      return null;
     }
 
     if (cell.hasMine) {
-      // onGameOver()
-      console.log('gameover');
+      return cell.hasMine;
     }
 
     if (cell.value !== 0) {
@@ -148,8 +147,13 @@ export default class Grid {
     } else {
       this.floodFill(cell);
     }
-    return true;
+    return false;
   }
+
+  reveal() {
+    this.matrix.forEach((row) => row.map((cell) => cell.openCell()));
+  }
+
 
   // refacotr with tests?
   private floodFill(cell: Cell) {

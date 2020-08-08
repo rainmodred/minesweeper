@@ -3,21 +3,6 @@ import styled from 'styled-components';
 
 import Field from './Field';
 import Cell from '../core/Cell';
-// import { connect } from 'react-redux';
-
-// import {
-//   createGrid,
-//   openOneCell,
-//   toggleFlag,
-//   revealMines,
-//   openMultipleCells,
-// } from '../actions/grid';
-// import {
-//   startGame,
-//   gameOver,
-//   gameWon,
-//   changeFlagsCount,
-// } from '../actions/game';
 
 interface GameboardProps {
   height: number;

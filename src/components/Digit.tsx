@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-
 // Seven segment digit https://codepen.io/joeyred/pen/gEpVbM
 // |--2--|
 // 0     5
@@ -9,8 +8,12 @@ import styled from 'styled-components';
 // 1     6
 // |--4--|
 
-function numberToSSD(num) {
-  const segmentsArray = {
+type Segments = {
+  [key: string]: boolean[];
+};
+
+function numberToSSD(key: string) {
+  const segments: Segments = {
     '0': [true, true, true, false, true, true, true],
     '1': [false, false, false, false, false, true, true],
     '2': [false, true, true, true, true, true, false],
@@ -21,10 +24,9 @@ function numberToSSD(num) {
     '7': [false, false, true, false, false, true, true],
     '8': [true, true, true, true, true, true, true],
     '9': [true, false, true, true, true, true, true],
-
     '-': [false, false, false, true, false, false, false],
   };
-  return segmentsArray[num];
+  return segments[key];
 }
 
 const Container = styled.div`
@@ -40,11 +42,11 @@ const Container = styled.div`
 `;
 
 interface DigitProps {
-  digit: number;
+  digit: string;
 }
 
-const Digit:React.FC<DigitProps> = ({ digit }) => {
-  const displayStates = numberToSSD(digit);
+const Digit: React.FC<DigitProps> = ({ digit }) => {
+  const displayStates = numberToSSD(digit.toString());
 
   const segments = [
     displayStates[0] ? (
@@ -134,7 +136,7 @@ const Digit:React.FC<DigitProps> = ({ digit }) => {
   ];
   return (
     <Container>
-      <svg viewBox="0 0 49.3 92.7" preserveAspectRatio="xMidYMid me
+      <svg viewBox="0 0 49.3 92.7" preserveAspectRatio="xMidYMid meet">
         {segments}
       </svg>
     </Container>
