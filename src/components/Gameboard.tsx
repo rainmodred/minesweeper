@@ -23,7 +23,8 @@ interface GameboardProps {
   height: number;
   width: number;
   gameboard: Cell[][] | null;
-  leftClick: (row: number, col: number) => void;
+  leftClick: (target: EventTarget) => void;
+  rightClick: (target: EventTarget) => void;
 }
 
 interface ContainerProps {
@@ -45,14 +46,12 @@ const Container = styled.div<ContainerProps>`
   border-right: 3px solid #fff;
 `;
 
-// todo
-// event delegation
-// grid on click not cell
 const Gameboard: React.FC<GameboardProps> = ({
   height,
   width,
   gameboard,
   leftClick,
+  rightClick,
 }) => {
   function renderGameboard() {
     if (gameboard === null) {
@@ -73,17 +72,16 @@ const Gameboard: React.FC<GameboardProps> = ({
     );
   }
 
-  function handleGameboardClick(e: React.MouseEvent<HTMLDivElement>) {
-    const cell = e?.target as HTMLElement;
-
-    const { row, col } = cell?.dataset;
-    if (row && col) {
-      leftClick(+row, +col);
-    }
-  }
-
   return (
-    <Container height={height} width={width} onClick={handleGameboardClick}>
+    <Container
+      height={height}
+      width={width}
+      onClick={(e) => leftClick(e.target)}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        rightClick(e.target);
+      }}
+    >
       {renderGameboard()}
     </Container>
   );

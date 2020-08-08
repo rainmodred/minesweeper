@@ -45,14 +45,29 @@ const Game: React.FC = () => {
     grid.print();
   }, []);
 
-  function handleGameboardLeftClick(row: number, col: number) {
-    const result = grid.showCell(row, col);
+  function handleGameboardLeftClick(target: EventTarget) {
+    const cell = target as HTMLElement;
+    if (target) {
+      const { row, col } = cell?.dataset!;
 
-    console.log(grid.print());
-    if (result) {
-      const newGrid = grid.matrix.slice();
+      if (row && col) {
+        const result = grid.showCell(+row, +col);
+        if (result) {
+          setGameboard(grid.matrix.slice());
+        }
+      }
+    }
+  }
 
-      setGameboard(newGrid);
+  function handleGameboardRightClick(target: EventTarget) {
+    const cell = target as HTMLElement;
+    if (target) {
+      const { row, col } = cell?.dataset!;
+
+      if (row && col) {
+        grid.toggleFlag(+row, +col);
+        setGameboard(grid.matrix.slice());
+      }
     }
   }
 
@@ -63,7 +78,10 @@ const Game: React.FC = () => {
         width={9}
         gameboard={gameboard}
         leftClick={handleGameboardLeftClick}
+        rightClick={handleGameboardRightClick}
       />
+
+      <Digit />
     </Container>
   );
 };

@@ -1,58 +1,90 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import styled from 'styled-components';
 
-// import Digit fr'./Digit'it";
-// import face1'../../assets/face1.png'1.png";
-// import fa'../../assets/face3.png'ace3.png";
-// import'../../assets/face4.png's/face4.png";
+import face1 from '../images/face1.png';
+import face2 from '../images/face2.png';
+import face3 from '../images/face3.png';
+import face4 from '../images/face4.png';
+
+const StyledScoreBoard = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  min-width: 220px;
+  height: 55px;
+  border-top: 3px solid #808080;
+  border-left: 3px solid #808080;
+  border-bottom: 3px solid #fff;
+  border-right: 3px solid #fff;
+  padding: 12px;
+`;
+
+const DigitsContainer = styled.div`
+  background-color: #000;
+  height: 35px;
+  width: 60px;
+  display: inline-block;
+  white-space: nowrap;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+`;
+
+interface SmileProps {
+  gameOver: boolean;
+  gameWon: boolean;
+}
+
+const Smile = styled.div<SmileProps>`
+  width: 40px;
+  height: 40px;
+  border-top: 4px solid #fff;
+  border-left: 4px solid #fff;
+  border-bottom: 5px solid #808080;
+  border-right: 5px solid #808080;
+  background: url('${(props) =>
+    props.gameWon ? face3 : props.gameOver ? face4 : face1}')no-repeat;
+  background-size: 30px;
+  background-position: center;
+  &:active {
+    border-top: 4px solid #808080;
+    border-left: 4px solid #808080;
+    border-bottom: 2px solid #808080;
+    border-right: 2px solid #808080;
+  }
+`;
 
 const ScoreBoard: React.FC = () => {
-  return <div />;
+  const [seconds, setSeconds] = useState(0);
+  const [isOn, setIsOn] = useState(false);
+
+  function startTimer() {
+    this.interval = setInterval(
+      () =>
+        this.setState((prevState) => {
+          return prevState.seconds++;
+        }),
+      1000
+    );
+  }
+
+  return (
+    <StyledScoreBoard>
+      <DigitsContainer>
+        {renderDigits(splitNumToDigits(flagsLeft))}
+      </DigitsContainer>
+      <Smile
+        // onClick={handleNewGameClick}
+        gameOver={gameOver}
+        gameWon={gameWon}
+      />
+      <DigitsContainer>
+        {renderDigits(splitNumToDigits(seconds))}
+      </DigitsContainer>
+    </StyledScoreBoard>
+  );
 };
-
-// const StyledScoreBoard = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   margin: 0 auto;
-//   min-width: 220px;
-//   height: 55px;
-//   border-top: 3px solid #808080;
-//   border-left: 3px solid #808080;
-//   border-bottom: 3px solid #fff;
-//   border-right: 3px solid #fff;
-//   padding: 12px;
-// `;
-
-// const DigitsContainer = styled.div`
-//   background-color: #000;
-//   height: 35px;
-//   width: 60px;
-//   display: inline-block;
-//   white-space: nowrap;
-//   padding: 2px;
-//   display: flex;
-//   align-items: center;
-// `;
-
-// const Smile = styled.div`
-//   width: 40px;
-//   height: 40px;
-//   border-top: 4px solid #fff;
-//   border-left: 4px solid #fff;
-//   border-bottom: 5px solid #808080;
-//   border-right: 5px solid #808080;
-//   background: url('${(props) =>
-//     props.gameWon ? face3 : props.gameOver ? face4 : face1}')no-repeat;
-//   background-size: 30px;
-//   background-position: center;
-//   &:active {
-//     border-top: 4px solid #808080;
-//     border-left: 4px solid #808080;
-//     border-bottom: 2px solid #808080;
-//     border-right: 2px solid #808080;
-//   }
-// `;
 
 // class ScoreBoard extends Component {
 //   constructor(props) {
