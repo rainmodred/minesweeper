@@ -40,9 +40,9 @@ export default class Grid {
   createGrid(height: number, width: number, minesQuantity: number) {
     let id = 0;
 
-    const arr = new Array(width);
+    const arr = new Array(height);
     for (let i = 0; i < arr.length; i++) {
-      arr[i] = new Array(height);
+      arr[i] = new Array(width);
       for (let j = 0; j < arr[i].length; j++) {
         arr[i][j] = new Cell(id, i, j);
         id++;
