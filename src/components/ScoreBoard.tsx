@@ -1,5 +1,7 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+
+import useInterval from '../hooks/useInterval';
 
 import face1 from '../images/face1.png';
 import face2 from '../images/face2.png';
@@ -7,6 +9,7 @@ import face3 from '../images/face3.png';
 import face4 from '../images/face4.png';
 import Digit from './Digit';
 import { Difficulty } from '../difficulties';
+import { GameState } from './Game';
 
 const StyledScoreBoard = styled.div`
   display: flex;
@@ -34,8 +37,7 @@ const DigitsContainer = styled.div`
 `;
 
 interface SmileProps {
-  gameOver: boolean;
-  gameWon: boolean;
+  gameState: GameState;
 }
 
 const Smile = styled.div<SmileProps>`
@@ -46,7 +48,11 @@ const Smile = styled.div<SmileProps>`
   border-bottom: 5px solid #808080;
   border-right: 5px solid #808080;
   background: url('${(props) =>
-    props.gameWon ? face3 : props.gameOver ? face4 : face1}')no-repeat;
+    props.gameState === GameState.won
+      ? face3
+      : props.gameState === GameState.lost
+      ? face4
+      : face1}')no-repeat;
   background-size: 30px;
   background-position: center;
   &:active {
@@ -60,23 +66,30 @@ const Smile = styled.div<SmileProps>`
 interface ScoreBoardProps {
   difficulty: Difficulty;
   flagsLeft: number;
-  gameOver: boolean;
-  gameWon: boolean;
-  gameStarted: boolean;
+  gameState: GameState;
   onNewGame: (difficulty: Difficulty) => void;
 }
 
 const ScoreBoard: React.FC<ScoreBoardProps> = ({
   difficulty,
   flagsLeft,
-  gameOver,
-  gameWon,
-  gameStarted,
+  gameState,
   onNewGame,
 }) => {
   const [seconds, setSeconds] = useState(0);
-  const [isOn, setIsOn] = useState(false);
-  const [timerId, setTimerId] = useState(0);
+
+  useEffect(() => {
+    if (gameState === GameState.started) {
+      setSeconds(1);
+    }
+  }, [gameState]);
+
+  useInterval(
+    () => {
+      setSeconds(seconds + 1);
+    },
+    gameState === GameState.started ? 1000 : null
+  );
 
   function renderDigits(arr: string[]) {
     return arr.map((digit, index) => {
@@ -101,41 +114,16 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
   }
 
   function handleNewGameClick() {
-    clearInterval(timerId);
     setSeconds(0);
-    setIsOn(false);
     onNewGame(difficulty);
   }
-
-  function startTimer() {
-    setTimerId(
-      setInterval(() => {
-        setSeconds(seconds + 1);
-      }, 1000)
-    );
-  }
-
-  // useffect gameStarted start timer
-  useEffect(() => {
-    startTimer();
-  }, [gameStarted]);
-
-  useEffect(() => {
-    return () => clearInterval(timerId);
-  });
-
-  useEffect(() => {}, [gameOver, gameWon]);
 
   return (
     <StyledScoreBoard>
       <DigitsContainer>
         {renderDigits(splitNumToDigits(flagsLeft))}
       </DigitsContainer>
-      <Smile
-        onClick={handleNewGameClick}
-        gameOver={gameOver}
-        gameWon={gameWon}
-      />
+      <Smile onClick={handleNewGameClick} gameState={gameState} />
       <DigitsContainer>
         {renderDigits(splitNumToDigits(seconds))}
       </DigitsContainer>

@@ -31,32 +31,33 @@ const StyledButton = styled.span`
   user-select: none;
 `;
 
-enum gameState {
-  gameOver,
-  gameWon,
+export enum GameState {
+  lost,
+  won,
+  started,
+  initial,
 }
 
 let grid = new Grid(9, 9, 10);
 
 const Game: React.FC = () => {
   const [gameboard, setGameboard] = useState<Cell[][] | null>(grid.matrix);
+  const [gameState, setGameState] = useState(GameState.initial);
   const [flagsLeft, setFlagsLeft] = useState(10);
-  const [gameOver, setGameOver] = useState(false);
-  const [gameWon, setGameWon] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
   const [currentDifficulty, setCurrentDifficulty] = useState(
     difficulties.Beginner
   );
   const [menuVisibility, setMenuVisibility] = useState(false);
 
+  // debug
   useEffect(() => {
     grid.print();
   }, []);
 
   function finishGame(state: string) {
     if (state === 'lost') {
-      setGameOver(true);
       grid.reveal();
+      setGameState(GameState.lost);
       setGameboard(grid.matrix);
     }
   }
@@ -68,13 +69,14 @@ const Game: React.FC = () => {
 
       if (row && col) {
         const result = grid.showCell(+row, +col);
-        if (result == null) {
+        if (result === null) {
           return;
         }
         if (result) {
           finishGame('lost');
         }
         if (!result) {
+          setGameState(GameState.started);
           setGameboard(grid.matrix.slice());
         }
       }
@@ -96,14 +98,12 @@ const Game: React.FC = () => {
 
   function handleNewGame(difficulty: Difficulty) {
     setCurrentDifficulty(difficulty);
-    setGameOver(false);
-    setGameWon(false);
-    setGameStarted(false);
+    setGameState(GameState.initial);
     setFlagsLeft(difficulty.minesQuantity);
     grid = new Grid(
-      currentDifficulty.height,
-      currentDifficulty.width,
-      currentDifficulty.minesQuantity
+      difficulty.height,
+      difficulty.width,
+      difficulty.minesQuantity
     );
     setGameboard(grid.matrix.slice());
   }
@@ -121,13 +121,12 @@ const Game: React.FC = () => {
       <ScoreBoard
         difficulty={currentDifficulty}
         flagsLeft={flagsLeft}
-        gameOver={gameOver}
-        gameWon={gameWon}
         onNewGame={handleNewGame}
+        gameState={gameState}
       />
       <GameBoard
-        height={9}
-        width={9}
+        height={currentDifficulty.height}
+        width={currentDifficulty.width}
         gameboard={gameboard}
         leftClick={handleGameboardLeftClick}
         rightClick={handleGameboardRightClick}
@@ -137,80 +136,3 @@ const Game: React.FC = () => {
 };
 
 export default Game;
-
-// class Game extends Component {
-//   state = {
-//     menuVisible: false,
-//   };
-
-//   handleNewGameClick = (difficulty) => {
-//     const { onNewGame } = this.props;
-
-//     onNewGame(difficulty);
-//   };
-
-//   handleMenuClick = () => {
-//     this.setState({ menuVisible: !this.state.menuVisible });
-//   };
-//   render() {
-//     const { handleMenuClick, handleNewGameClick } = this;
-//     const {
-//       flagsLeft,
-//       gameStarted,
-//       gameOver,
-//       gameWon,
-//       difficulty,
-//     } = this.props;
-//     return (
-//       <Fragment>
-//         <Container>
-//           <Menu
-//             visible={this.state.menuVisible}
-//             closeMenu={handleMenuClick}
-//             newGameClick={handleNewGameClick}
-//           />
-//           <StyledButton onClick={handleMenuClick}>Settings</StyledButton>
-//           <ScoreBoard
-//             newGameClick={handleNewGameClick}
-//             flagsLeft={flagsLeft}
-//             gameStarted={gameStarted}
-//             gameOver={gameOver}
-//             gameWon={gameWon}
-//             difficulty={difficulty}
-//           />
-//           <Grid />
-//         </Container>
-//       </Fragment>
-//     );
-//   }
-// }
-
-// const mapStateToProps = ({
-//   game: {
-//     gameOver,
-//     gameStarted,
-//     difficulty,
-//     flagsLeft,
-//     gameWon,
-//     currentDifficulty,
-//   },
-// }) => {
-//   return {
-//     gameStarted,
-//     gameOver,
-//     gameWon,
-//     difficulty,
-//     flagsLeft,
-//     currentDifficulty,
-//   };
-// };
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     onCreateGrid: (height, width, minesCount) =>
-//       dispatch(createGrid(height, width, minesCount)),
-//     onNewGame: (difficulty) => dispatch(newGame(difficulty)),
-//   };
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(Game);
