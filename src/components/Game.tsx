@@ -65,10 +65,16 @@ const Game: React.FC = () => {
   function handleGameboardLeftClick(target: EventTarget) {
     const cell = target as HTMLElement;
     if (target) {
-      const { row, col } = cell?.dataset!;
+      const row = Number(cell?.dataset.row!);
+      const col = Number(cell?.dataset.col!);
 
-      if (row && col) {
-        const result = grid.showCell(+row, +col);
+      if (Number.isInteger(row) && Number.isInteger(col)) {
+        if (gameState === GameState.initial && grid.getCell(row, col).hasMine) {
+          grid.moveMine(row, col);
+          setGameboard(grid.matrix.slice());
+        }
+
+        const result = grid.showCell(row, col);
         if (result === null) {
           return;
         }

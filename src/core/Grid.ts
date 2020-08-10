@@ -37,24 +37,8 @@ export default class Grid {
     return emptyCells;
   }
 
-  createGrid(height: number, width: number, minesQuantity: number) {
-    let id = 0;
-
-    const arr = new Array(height);
-    for (let i = 0; i < arr.length; i++) {
-      arr[i] = new Array(width);
-      for (let j = 0; j < arr[i].length; j++) {
-        arr[i][j] = new Cell(id, i, j);
-        id++;
-      }
-    }
-    this.matrix = arr;
-    this.addMines(minesQuantity);
-  }
-
   private addMines(minesQuantity: number) {
     const emptyCells = this.getEmptyCells();
-
     const randomCells: number[] = [];
 
     while (randomCells.length < minesQuantity) {
@@ -100,6 +84,38 @@ export default class Grid {
 
   print() {
     console.table(this.matrix.map((row) => row.map((cell: Cell) => cell.value)));
+  }
+
+  createGrid(height: number, width: number, minesQuantity: number) {
+    let id = 0;
+
+    const arr = new Array(height);
+    for (let i = 0; i < arr.length; i++) {
+      arr[i] = new Array(width);
+      for (let j = 0; j < arr[i].length; j++) {
+        arr[i][j] = new Cell(id, i, j);
+        id++;
+      }
+    }
+    this.matrix = arr;
+    this.addMines(minesQuantity);
+  }
+
+  moveMine(row: number, col: number) {
+    const emptyCells = this.getEmptyCells();
+    const randomCell = emptyCells[getRandomInt(0, emptyCells.length)];
+
+    this.getCell(row, col).hasMine = false;
+    this.getCell(randomCell.row, randomCell.col).hasMine = true;
+
+    const coords = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+
+    for (const coord of coords) {
+      if (row + coord[0] >= 0 && row + coord[0] < this.matrix.length && col + coord[1] >= 0 && col + coord[1] < this.matrix[0].length) {
+        const cell = this.getCell(row + coord[0], col + coord[1]);
+        cell.setValue(this.findMinesAround(cell.row, cell.col));
+      }
+    }
   }
 
   getValue(row: number, col: number) {
