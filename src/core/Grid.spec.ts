@@ -62,7 +62,19 @@ describe('Grid', () => {
 
   it('can open multiple cells', () => {
     grid = new Grid(9, 9, 0);
-    // zero values bug
+    /*
+      [
+        [0, 0, 0, 1, 0, M, 0, 0, 0],
+        [0, 0, 0, 3, M, 0, 0, 0, 0],
+        [2, 3, 3, 5, M, 0, 0, 0, 0],
+        [M, M, M, M, M, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ]
+    */
 
     grid.matrix[0][5].hasMine = true;
     grid.matrix[1][4].hasMine = true;
@@ -83,15 +95,48 @@ describe('Grid', () => {
 
     grid.minesQuantity = 8;
 
-    grid.openCell(0, 0);
+    grid.showCell(0, 0);
     grid.print();
 
     expect(grid.getCell(0, 0).isOpened()).toBeTruthy();
     expect(grid.getCell(0, 1).isOpened()).toBeTruthy();
     expect(grid.getCell(0, 2).isOpened()).toBeTruthy();
+    expect(grid.getCell(0, 3).isOpened()).toBeTruthy();
+    expect(grid.getCell(0, 4).isOpened()).toBeFalsy();
     expect(grid.getCell(1, 0).isOpened()).toBeTruthy();
     expect(grid.getCell(1, 1).isOpened()).toBeTruthy();
     expect(grid.getCell(1, 2).isOpened()).toBeTruthy();
+    expect(grid.getCell(1, 3).isOpened()).toBeTruthy();
+    expect(grid.getCell(2, 0).isOpened()).toBeTruthy();
+    expect(grid.getCell(2, 1).isOpened()).toBeTruthy();
+    expect(grid.getCell(2, 2).isOpened()).toBeTruthy();
+    expect(grid.getCell(2, 3).isOpened()).toBeFalsy();
+  });
+
+  it('can move mine', () => {
+    grid = new Grid(9, 9, 0);
+
+    grid.minesQuantity = 1;
+    grid.getCell(1, 1).hasMine = true;
+
+    grid.getCell(0, 0).setValue(1);
+    grid.getCell(0, 1).setValue(1);
+    grid.getCell(0, 2).setValue(1);
+    grid.getCell(1, 0).setValue(1);
+    grid.getCell(1, 2).setValue(1);
+    grid.getCell(2, 0).setValue(1);
+    grid.getCell(2, 1).setValue(1);
+    grid.getCell(2, 2).setValue(1);
+
+    grid.moveMine(1, 1);
+
+    grid.print();
+
+    const newMinePos = grid.matrix.find((row) => row.find((cell) => cell.hasMine));
+    console.log(newMinePos);
+
+
+
   });
 });
 
