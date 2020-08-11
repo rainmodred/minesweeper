@@ -53,10 +53,10 @@ export default class Grid {
       this.matrix[row][col].setMine();
     });
 
-    this.setCellValue();
+    this.setCellsValue();
   }
 
-  private setCellValue() {
+  private setCellsValue() {
     return this.matrix.map(row => {
       return row.map(cell => {
         if (!cell.hasMine) {
@@ -107,15 +107,9 @@ export default class Grid {
 
     this.getCell(row, col).hasMine = false;
     this.getCell(randomCell.row, randomCell.col).hasMine = true;
+    this.getCell(randomCell.row, randomCell.col).value = 0;
 
-    const coords = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-
-    for (const coord of coords) {
-      if (row + coord[0] >= 0 && row + coord[0] < this.matrix.length && col + coord[1] >= 0 && col + coord[1] < this.matrix[0].length) {
-        const cell = this.getCell(row + coord[0], col + coord[1]);
-        cell.setValue(this.findMinesAround(cell.row, cell.col));
-      }
-    }
+    this.setCellsValue();
   }
 
   getValue(row: number, col: number) {
