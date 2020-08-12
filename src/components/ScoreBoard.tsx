@@ -82,6 +82,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
     if (gameState === GameState.started) {
       setSeconds(1);
     }
+    if (gameState === GameState.initial) {
+      setSeconds(0);
+    }
   }, [gameState]);
 
   useInterval(
