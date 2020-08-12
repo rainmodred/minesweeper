@@ -94,6 +94,9 @@ const Game: React.FC = () => {
     // first move should be safe
     if (gameState === GameState.initial && grid.getCell(row, col).hasMine) {
       grid.moveMine(row, col);
+    }
+
+    if (gameState === GameState.initial) {
       setGameState(GameState.started);
     }
 
