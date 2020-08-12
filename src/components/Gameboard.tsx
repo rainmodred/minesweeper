@@ -4,14 +4,6 @@ import styled from 'styled-components';
 import Field from './Field';
 import Cell from '../core/Cell';
 
-interface GameboardProps {
-  height: number;
-  width: number;
-  gameboard: Cell[][] | null;
-  leftClick: (target: EventTarget) => void;
-  rightClick: (target: EventTarget) => void;
-}
-
 interface ContainerProps {
   height: number;
   width: number;
@@ -31,13 +23,38 @@ const Container = styled.div<ContainerProps>`
   border-right: 3px solid #fff;
 `;
 
+interface GameboardProps {
+  height: number;
+  width: number;
+  gameboard: Cell[][] | null;
+  onLeftClick: (row: number, col: number) => void;
+  onRightClick: (row: number, col: number) => void;
+}
+
 const Gameboard: React.FC<GameboardProps> = ({
   height,
   width,
   gameboard,
-  leftClick,
-  rightClick,
+  onLeftClick,
+  onRightClick,
 }) => {
+  function handleLeftClick(event: React.MouseEvent<HTMLElement>) {
+    const cell = event.target as HTMLElement;
+    const { row, col } = cell?.dataset!;
+    if (row && col) {
+      onLeftClick(+row, +col);
+    }
+  }
+
+  function handleRightClick(event: React.MouseEvent<HTMLElement>) {
+    event.preventDefault();
+    const cell = event.target as HTMLElement;
+    const { row, col } = cell?.dataset!;
+    if (row && col) {
+      onRightClick(+row, +col);
+    }
+  }
+
   function renderGameboard() {
     if (gameboard === null) {
       return null;
@@ -61,11 +78,8 @@ const Gameboard: React.FC<GameboardProps> = ({
     <Container
       height={height}
       width={width}
-      onClick={(e) => leftClick(e.target)}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        rightClick(e.target);
-      }}
+      onClick={handleLeftClick}
+      onContextMenu={handleRightClick}
     >
       {renderGameboard()}
     </Container>

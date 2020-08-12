@@ -38,12 +38,30 @@ export enum GameState {
   initial,
 }
 
-let grid = new Grid(9, 9, 10);
+let grid = new Grid(9, 9, 2);
+// grid.matrix[0][5].hasMine = true;
+// grid.matrix[1][4].hasMine = true;
+// grid.matrix[2][4].hasMine = true;
+// grid.matrix[3][4].hasMine = true;
+// grid.matrix[3][3].hasMine = true;
+// grid.matrix[3][2].hasMine = true;
+// grid.matrix[3][1].hasMine = true;
+// grid.matrix[3][0].hasMine = true;
+
+// grid.matrix[2][0].value = 2;
+// grid.matrix[2][1].value = 3;
+// grid.matrix[2][2].value = 3;
+// grid.matrix[2][3].value = 5;
+// grid.matrix[1][3].value = 3;
+// grid.matrix[0][3].value = 1;
+// grid.matrix[0][4].value = 2;
+
+// grid.minesQuantity = 8;
 
 const Game: React.FC = () => {
   const [gameboard, setGameboard] = useState<Cell[][] | null>(grid.matrix);
   const [gameState, setGameState] = useState(GameState.initial);
-  const [flagsLeft, setFlagsLeft] = useState(10);
+  const [flagsLeft, setFlagsLeft] = useState(grid.minesQuantity);
   const [currentDifficulty, setCurrentDifficulty] = useState(
     difficulties.Beginner
   );
@@ -54,54 +72,49 @@ const Game: React.FC = () => {
     grid.print();
   }, []);
 
-  function finishGame(state: string) {
-    if (state === 'lost') {
+  function gameOver() {
+    grid.reveal();
+    setGameState(GameState.lost);
+    setGameboard(grid.matrix.slice());
+  }
+
+  function checkForWin() {
+    if (grid.width * grid.height - grid.minesQuantity === grid.openedCells) {
+      setGameState(GameState.won);
       grid.reveal();
-      setGameState(GameState.lost);
-      setGameboard(grid.matrix);
+      setGameboard(grid.matrix.slice());
     }
   }
 
-  function handleGameboardLeftClick(target: EventTarget) {
-    const cell = target as HTMLElement;
-    if (target) {
-      const row = Number(cell?.dataset.row!);
-      const col = Number(cell?.dataset.col!);
+  function handleGameboardLeftClick(row: number, col: number) {
+    if (gameState === GameState.lost || gameState === GameState.won) {
+      return;
+    }
 
-      if (Number.isInteger(row) && Number.isInteger(col)) {
-        if (gameState === GameState.initial && grid.getCell(row, col).hasMine) {
-          grid.moveMine(row, col);
-          setGameboard(grid.matrix.slice());
-        }
+    // first move should be safe
+    if (gameState === GameState.initial && grid.getCell(row, col).hasMine) {
+      grid.moveMine(row, col);
+      setGameState(GameState.started);
+    }
 
-        const result = grid.showCell(row, col);
-        if (result === null) {
-          return;
-        }
-        if (result) {
-          finishGame('lost');
-        }
-        if (!result) {
-          setGameState(GameState.started);
-          setGameboard(grid.matrix.slice());
-        }
-      }
+    const result = grid.showCell(row, col);
+    if (result === null) {
+      return;
+    }
+    if (!result) {
+      gameOver();
+    }
+    if (result) {
+      setGameboard(grid.matrix.slice());
+      checkForWin();
     }
   }
 
-  function handleGameboardRightClick(target: EventTarget) {
-    const cell = target as HTMLElement;
-    if (
-      target &&
-      (gameState === GameState.initial || gameState === GameState.started)
-    ) {
-      const { row, col } = cell?.dataset!;
-
-      if (row && col) {
-        setFlagsLeft(flagsLeft - 1);
-        grid.toggleFlag(+row, +col);
-        setGameboard(grid.matrix.slice());
-      }
+  function handleGameboardRightClick(row: number, col: number) {
+    if (gameState === GameState.initial || gameState === GameState.started) {
+      setFlagsLeft(flagsLeft - 1);
+      grid.toggleFlag(row, col);
+      setGameboard(grid.matrix.slice());
     }
   }
 
@@ -138,8 +151,8 @@ const Game: React.FC = () => {
         height={currentDifficulty.height}
         width={currentDifficulty.width}
         gameboard={gameboard}
-        leftClick={handleGameboardLeftClick}
-        rightClick={handleGameboardRightClick}
+        onLeftClick={handleGameboardLeftClick}
+        onRightClick={handleGameboardRightClick}
       />
     </Container>
   );
