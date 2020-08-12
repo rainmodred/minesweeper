@@ -1,16 +1,4 @@
 import Grid from './Grid';
-import Cell, { CellState } from './Cell';
-
-function clearMatrix(matrix: Cell[][]): Cell {
-  return matrix.map((row) => row.map((cell) => {
-    return {
-      ...cell,
-      hasMine: false,
-      state: CellState.closed,
-      value: 0
-    };
-  }));
-}
 
 describe('Grid', () => {
   let grid = new Grid(9, 9, 10);
@@ -40,24 +28,24 @@ describe('Grid', () => {
   it('can open empty cell', () => {
     const cell = grid.getCell(0, 0);
 
-    expect(cell.isOpened()).toBeFalsy();
+    expect(cell.isOpened).toBeFalsy();
 
     grid.openCell(0, 0);
 
-    expect(cell.isOpened()).toBeTruthy();
+    expect(cell.isOpened).toBeTruthy();
   });
 
   it('can\'t open flagged cell', () => {
     const cell = grid.getCell(0, 0);
 
-    expect(cell.isOpened()).toBeFalsy();
-    expect(cell.isFlagged()).toBeFalsy();
+    expect(cell.isOpened).toBeFalsy();
+    expect(cell.isFlagged).toBeFalsy();
 
     grid.toggleFlag(0, 0);
     grid.openCell(0, 0);
 
-    expect(cell.isOpened()).toBeFalsy();
-    expect(cell.isFlagged()).toBeTruthy();
+    expect(cell.isOpened).toBeFalsy();
+    expect(cell.isFlagged).toBeTruthy();
   });
 
   it('can open multiple cells', () => {
@@ -98,19 +86,19 @@ describe('Grid', () => {
     grid.showCell(0, 0);
     grid.print();
 
-    expect(grid.getCell(0, 0).isOpened()).toBeTruthy();
-    expect(grid.getCell(0, 1).isOpened()).toBeTruthy();
-    expect(grid.getCell(0, 2).isOpened()).toBeTruthy();
-    expect(grid.getCell(0, 3).isOpened()).toBeTruthy();
-    expect(grid.getCell(0, 4).isOpened()).toBeFalsy();
-    expect(grid.getCell(1, 0).isOpened()).toBeTruthy();
-    expect(grid.getCell(1, 1).isOpened()).toBeTruthy();
-    expect(grid.getCell(1, 2).isOpened()).toBeTruthy();
-    expect(grid.getCell(1, 3).isOpened()).toBeTruthy();
-    expect(grid.getCell(2, 0).isOpened()).toBeTruthy();
-    expect(grid.getCell(2, 1).isOpened()).toBeTruthy();
-    expect(grid.getCell(2, 2).isOpened()).toBeTruthy();
-    expect(grid.getCell(2, 3).isOpened()).toBeFalsy();
+    expect(grid.getCell(0, 0).isOpened).toBeTruthy();
+    expect(grid.getCell(0, 1).isOpened).toBeTruthy();
+    expect(grid.getCell(0, 2).isOpened).toBeTruthy();
+    expect(grid.getCell(0, 3).isOpened).toBeTruthy();
+    expect(grid.getCell(0, 4).isOpened).toBeFalsy();
+    expect(grid.getCell(1, 0).isOpened).toBeTruthy();
+    expect(grid.getCell(1, 1).isOpened).toBeTruthy();
+    expect(grid.getCell(1, 2).isOpened).toBeTruthy();
+    expect(grid.getCell(1, 3).isOpened).toBeTruthy();
+    expect(grid.getCell(2, 0).isOpened).toBeTruthy();
+    expect(grid.getCell(2, 1).isOpened).toBeTruthy();
+    expect(grid.getCell(2, 2).isOpened).toBeTruthy();
+    expect(grid.getCell(2, 3).isOpened).toBeFalsy();
   });
 
   it('can move mine', () => {
@@ -119,24 +107,42 @@ describe('Grid', () => {
     grid.minesQuantity = 1;
     grid.getCell(1, 1).hasMine = true;
 
-    grid.getCell(0, 0).setValue(1);
-    grid.getCell(0, 1).setValue(1);
-    grid.getCell(0, 2).setValue(1);
-    grid.getCell(1, 0).setValue(1);
-    grid.getCell(1, 2).setValue(1);
-    grid.getCell(2, 0).setValue(1);
-    grid.getCell(2, 1).setValue(1);
-    grid.getCell(2, 2).setValue(1);
+    grid.getCell(0, 0).value = 1;
+    grid.getCell(0, 1).value = 1;
+    grid.getCell(0, 2).value = 1;
+    grid.getCell(1, 0).value = 1;
+    grid.getCell(1, 2).value = 1;
+    grid.getCell(2, 0).value = 1;
+    grid.getCell(2, 1).value = 1;
+    grid.getCell(2, 2).value = 1;
 
     grid.moveMine(1, 1);
 
     grid.print();
 
-    const newMinePos = grid.matrix.find((row) => row.find((cell) => cell.hasMine));
-    console.log(newMinePos);
+    let movedCell = null;
+    for (const row of grid.matrix) {
+      for (const cell of row) {
+        if (cell.hasMine) {
+          movedCell = cell;
+        }
+      }
+    }
 
+    const { row, col } = movedCell!;
+    let aroundCells = true;
+    for (let i = row - 1; i <= row + 1; i++) {
+      for (let j = col - 1; j <= col + 1; j++) {
+        if (i >= 0 && i < grid.matrix.length && j >= 0 && j < grid.matrix[0].length) {
+          if (grid.matrix[i][j].value === 0 && (i !== row && j !== col)) {
+            aroundCells = false;
+            break;
+          }
+        }
+      }
+    }
 
-
+    expect(aroundCells).toBeTruthy();
   });
 });
 

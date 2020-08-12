@@ -30,11 +30,11 @@ export default class Cell {
     this.value = 0;
   }
 
-  isFlagged() {
+  get isFlagged() {
     return this.state === CellState.flagged;
   }
 
-  isOpened() {
+  get isOpened() {
     return this.state === CellState.opened;
   }
 
@@ -44,22 +44,6 @@ export default class Cell {
     } else {
       this.state = CellState.flagged;
     }
-  }
-
-  getValue() {
-    return this.value;
-  }
-
-  setValue(newValue: number) {
-    this.value = newValue;
-  }
-
-  setState(newState: CellState) {
-    this.state = newState;
-  }
-
-  setMine() {
-    this.hasMine = true;
   }
 
   openCell() {

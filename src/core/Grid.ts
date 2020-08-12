@@ -50,7 +50,7 @@ export default class Grid {
 
     randomCells.forEach((i) => {
       const { row, col } = emptyCells[i];
-      this.matrix[row][col].setMine();
+      this.matrix[row][col].hasMine = true;
     });
 
     this.setCellsValue();
@@ -60,7 +60,7 @@ export default class Grid {
     return this.matrix.map(row => {
       return row.map(cell => {
         if (!cell.hasMine) {
-          cell.setValue(this.findMinesAround(cell.row, cell.col));
+          cell.value = this.findMinesAround(cell.row, cell.col);
         }
         return cell;
       });
@@ -113,23 +113,11 @@ export default class Grid {
   }
 
   getValue(row: number, col: number) {
-    return this.matrix[row][col].getValue();
+    return this.matrix[row][col].value;
   }
 
   getCell(row: number, col: number) {
     return this.matrix[row][col];
-  }
-
-  isOpened(row: number, col: number) {
-    return this.matrix[row][col].isOpened();
-  }
-
-  setState(row: number, col: number, newState: CellState) {
-    this.getCell(row, col).setValue(newState);
-  }
-
-  isFlagged(row: number, col: number) {
-    return this.matrix[row][col].isFlagged();
   }
 
   toggleFlag(row: number, col: number) {
@@ -164,8 +152,6 @@ export default class Grid {
     this.matrix.forEach((row) => row.map((cell) => cell.openCell()));
   }
 
-
-  // refacotr with tests?
   private floodFill(cell: Cell) {
     const que: Cell[] = [];
     const { height } = this;
@@ -181,41 +167,45 @@ export default class Grid {
 
       // WEST
       if (col - 1 >= 0 && col < width) {
-        if (this.getValue(row, col - 1) === 0 && !this.isOpened(row, col - 1) && !this.isFlagged(row, col - 1)) {
-          this.openCell(row, col - 1);
-          que.push(this.getCell(row, col - 1));
+        const currentCell = this.getCell(row, col - 1);
+        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+          currentCell.openCell();
+          que.push(currentCell);
         } else {
-          this.openCell(row, col - 1);
+          currentCell.openCell();
           openedCells++;
         }
       }
       // EAST
       if (col >= 0 && col + 1 < width) {
-        if (this.getValue(row, col + 1) === 0 && !this.isOpened(row, col + 1) && !this.isFlagged(row, col + 1)) {
-          this.openCell(row, col + 1);
-          que.push(this.getCell(row, col + 1));
+        const currentCell = this.getCell(row, col + 1);
+        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+          currentCell.openCell();
+          que.push(currentCell);
         } else {
-          this.openCell(row, col + 1);
+          currentCell.openCell();
           openedCells++;
         }
       }
       // NORTH
       if (row - 1 >= 0 && row < height) {
-        if (this.getValue(row - 1, col) === 0 && !this.isOpened(row - 1, col) && !this.isFlagged(row - 1, col)) {
-          this.openCell(row - 1, col);
-          que.push(this.getCell(row - 1, col));
+        const currentCell = this.getCell(row - 1, col);
+        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+          currentCell.openCell();
+          que.push(currentCell);
         } else {
-          this.openCell(row - 1, col);
+          currentCell.openCell();
           openedCells++;
         }
       }
       // SOUTH
       if (row >= 0 && row + 1 < height) {
-        if (this.getValue(row + 1, col) === 0 && !this.isOpened(row + 1, col) && !this.isFlagged(row + 1, col)) {
-          this.openCell(row + 1, col);
-          que.push(this.getCell(row + 1, col));
+        const currentCell = this.getCell(row + 1, col);
+        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+          currentCell.openCell();
+          que.push(currentCell);
         } else {
-          this.openCell(row + 1, col);
+          currentCell.openCell();
           openedCells++;
         }
       }
