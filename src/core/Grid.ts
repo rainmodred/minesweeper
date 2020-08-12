@@ -10,6 +10,8 @@ export default class Grid {
 
   minesQuantity: number;
 
+  openedCells: number;
+
   constructor(
     height: number,
     width: number,
@@ -19,6 +21,7 @@ export default class Grid {
     this.height = height;
     this.width = width;
     this.minesQuantity = minesQuantity;
+    this.openedCells = 0;
 
     this.createGrid(height, width, minesQuantity);
   }
@@ -137,19 +140,20 @@ export default class Grid {
     }
 
     if (cell.hasMine) {
-      return cell.hasMine;
+      return !cell.hasMine;
     }
 
     if (cell.value !== 0) {
       cell.openCell();
+      this.openedCells++;
     } else {
       this.floodFill(cell);
     }
-    return false;
+    return true;
   }
 
   reveal() {
-    this.matrix.forEach((row) => row.map((cell) => cell.openCell()));
+    this.matrix.forEach((row) => row.map((cell) => cell.hasMine && cell.openCell()));
   }
 
   private floodFill(cell: Cell) {
@@ -158,60 +162,67 @@ export default class Grid {
     const { width } = this;
 
     cell.openCell();
-    let openedCells = 0;
-
     que.push(cell);
     while (que.length !== 0) {
+      this.openedCells++;
       const { row, col } = que.shift()!;
-      openedCells++;
-
       // WEST
       if (col - 1 >= 0 && col < width) {
         const currentCell = this.getCell(row, col - 1);
-        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+        if (currentCell.value === 0) {
+          if (!currentCell.isOpened && !currentCell.isFlagged) {
+            currentCell.openCell();
+            que.push(currentCell);
+          }
+        } else if (!currentCell.isOpened) {
           currentCell.openCell();
-          que.push(currentCell);
-        } else {
-          currentCell.openCell();
-          openedCells++;
+          this.openedCells++;
+
         }
       }
       // EAST
       if (col >= 0 && col + 1 < width) {
         const currentCell = this.getCell(row, col + 1);
-        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+        if (currentCell.value === 0) {
+          if (!currentCell.isOpened && !currentCell.isFlagged) {
+            currentCell.openCell();
+            que.push(currentCell);
+          }
+        } else if (!currentCell.isOpened) {
           currentCell.openCell();
-          que.push(currentCell);
-        } else {
-          currentCell.openCell();
-          openedCells++;
+          this.openedCells++;
+
         }
       }
       // NORTH
       if (row - 1 >= 0 && row < height) {
         const currentCell = this.getCell(row - 1, col);
-        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+        if (currentCell.value === 0) {
+          if (!currentCell.isOpened && !currentCell.isFlagged) {
+            currentCell.openCell();
+            que.push(currentCell);
+          }
+        } else if (!currentCell.isOpened) {
           currentCell.openCell();
-          que.push(currentCell);
-        } else {
-          currentCell.openCell();
-          openedCells++;
+          this.openedCells++;
+
         }
       }
       // SOUTH
       if (row >= 0 && row + 1 < height) {
         const currentCell = this.getCell(row + 1, col);
-        if (currentCell.value === 0 && !currentCell.isOpened && !currentCell.isFlagged) {
+        if (currentCell.value === 0) {
+          if (!currentCell.isOpened && !currentCell.isFlagged) {
+            currentCell.openCell();
+            que.push(currentCell);
+          }
+        } else if (!currentCell.isOpened) {
           currentCell.openCell();
-          que.push(currentCell);
-        } else {
-          currentCell.openCell();
-          openedCells++;
+          this.openedCells++;
+
         }
       }
     }
-
-    return openedCells;
   }
 }
 
