@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Options, difficulties, Difficulty } from '../difficulties';
+import { Options, difficulties, Difficulty } from '../core/difficulties';
 
 interface StyledMenuProps {
   visible: boolean;

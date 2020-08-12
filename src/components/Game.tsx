@@ -6,7 +6,7 @@ import Grid from '../core/Grid';
 import Cell from '../core/Cell';
 import ScoreBoard from './ScoreBoard';
 import Menu from './Menu';
-import { Difficulty, difficulties } from '../difficulties';
+import { Difficulty, difficulties } from '../core/difficulties';
 
 const Container = styled.div`
   display: inline-block;
@@ -91,7 +91,10 @@ const Game: React.FC = () => {
 
   function handleGameboardRightClick(target: EventTarget) {
     const cell = target as HTMLElement;
-    if (target) {
+    if (
+      target &&
+      (gameState === GameState.initial || gameState === GameState.started)
+    ) {
       const { row, col } = cell?.dataset!;
 
       if (row && col) {
@@ -112,6 +115,7 @@ const Game: React.FC = () => {
       difficulty.minesQuantity
     );
     setGameboard(grid.matrix.slice());
+    grid.print();
   }
 
   return (

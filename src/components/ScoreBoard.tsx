@@ -8,7 +8,7 @@ import face2 from '../images/face2.png';
 import face3 from '../images/face3.png';
 import face4 from '../images/face4.png';
 import Digit from './Digit';
-import { Difficulty } from '../difficulties';
+import { Difficulty } from '../core/difficulties';
 import { GameState } from './Game';
 
 const StyledScoreBoard = styled.div`
