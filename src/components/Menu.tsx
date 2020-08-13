@@ -9,7 +9,7 @@ interface StyledMenuProps {
 const StyledMenu = styled.div<StyledMenuProps>`
   display: ${(props) => (props.visible ? '' : 'none')};
   border: 1px solid #444444;
-  width: 280px;
+  width: 300px;
   position: absolute;
   top: 85px;
   left: 25px;
@@ -27,19 +27,11 @@ const MenuHeader = styled.div`
   border-bottom: 1px solid #444444;
 `;
 
-const MenuBody = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: 3px;
-  background-color: #eeeeee;
-  table {
-    border-collapse: collapse;
-  }
-  th,
-  td {
-    padding: 3px 3px;
-  }
+const MenuBody = styled.table`
+  width: 100%;
+  border-collapse: collapse;
 `;
+
 const MenuFooter = styled.div`
   padding: 3px;
   display: flex;
@@ -58,6 +50,29 @@ const NewGameButton = styled.span`
   :active {
     background-color: #0066aa;
   }
+`;
+
+const StyledThead = styled.thead`
+  background-color: #ddd;
+  text-align: left;
+  tr {
+    height: 24px;
+  }
+`;
+
+const StyledTbody = styled.tbody`
+  background-color: #eeeeee;
+  tr {
+    height: 24px;
+  }
+`;
+
+const StyledTh = styled.th`
+  font-weight: normal;
+`;
+
+const StyledLabel = styled.label`
+  font-weight: bold;
 `;
 
 interface MenuProps {
@@ -86,66 +101,67 @@ const Menu: React.FC<MenuProps> = ({ visible, onCloseMenu, onNewGame }) => {
         Game <CloseMenuButton onClick={onCloseMenu}>X</CloseMenuButton>
       </MenuHeader>
       <MenuBody>
-        <table>
-          <thead>
-            <tr>
-              <th>Difficulty</th>
-              <th>Height</th>
-              <th>Width</th>
-              <th>Mines</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <label>
-                  <input
-                    type="radio"
-                    onChange={handleDifficultyChange}
-                    checked={selectedOption === 'Beginner'}
-                    value="Beginner"
-                  />
-                  Beginner
-                </label>
-              </td>
-              <td>9</td>
-              <td>9</td>
-              <td>10</td>
-            </tr>
-            <tr>
-              <td>
-                <label>
-                  <input
-                    type="radio"
-                    onChange={handleDifficultyChange}
-                    checked={selectedOption === 'Intermediate'}
-                    value="Intermediate"
-                  />
-                  Intermediate
-                </label>
-              </td>
-              <td>16</td>
-              <td>16</td>
-              <td>40</td>
-            </tr>
-            <tr>
-              <td>
-                <label>
-                  <input
-                    type="radio"
-                    onChange={handleDifficultyChange}
-                    checked={selectedOption === 'Expert'}
-                    value="Expert"
-                  />
-                  Expert
-                </label>
-              </td>
-              <td>16</td>
-              <td>30</td>
-              <td>99</td>
-            </tr>
-          </tbody>
-        </table>
+        <StyledThead>
+          <tr>
+            <StyledTh />
+            <StyledTh>Height</StyledTh>
+            <StyledTh>Width</StyledTh>
+            <StyledTh>Mines</StyledTh>
+          </tr>
+        </StyledThead>
+        <StyledTbody>
+          <tr>
+            <td>
+              <StyledLabel>
+                <input
+                  type="radio"
+                  onChange={handleDifficultyChange}
+                  checked={selectedOption === 'Beginner'}
+                  value="Beginner"
+                  style={{ margin: '0 5px' }}
+                />
+                Beginner
+              </StyledLabel>
+            </td>
+            <td>9</td>
+            <td>9</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>
+              <StyledLabel>
+                <input
+                  type="radio"
+                  onChange={handleDifficultyChange}
+                  checked={selectedOption === 'Intermediate'}
+                  value="Intermediate"
+                  style={{ margin: '0 5px' }}
+                />
+                Intermediate
+              </StyledLabel>
+            </td>
+            <td>16</td>
+            <td>16</td>
+            <td>40</td>
+          </tr>
+          <tr>
+            <td>
+              <StyledLabel>
+                <input
+                  type="radio"
+                  onChange={handleDifficultyChange}
+                  checked={selectedOption === 'Expert'}
+                  value="Expert"
+                  style={{ margin: '0 5px' }}
+                />
+                Expert
+              </StyledLabel>
+            </td>
+            <td>16</td>
+            <td>30</td>
+            <td>99</td>
+          </tr>
+        </StyledTbody>
       </MenuBody>
       <MenuFooter>
         <NewGameButton

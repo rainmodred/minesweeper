@@ -13,9 +13,11 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     margin: 0;
     box-sizing: inherit;
+    font-family: Arial, Helvetica, sans-serif;
   }
   body {
     box-sizing: border-box;
+    background-color: #262626;
   }
 `;
 

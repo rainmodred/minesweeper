@@ -20,12 +20,15 @@ const Container = styled.div`
 
 const StyledButton = styled.span`
   display: inline;
-  color: blue;
-  text-decoration: underline;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 1px;
   position: absolute;
   background: transparent;
   border: none;
-  top: -18px;
+  top: -20px;
   left: 0;
   cursor: pointer;
   user-select: none;
@@ -142,7 +145,7 @@ const Game: React.FC = () => {
         onNewGame={handleNewGame}
       />
       <StyledButton onClick={() => setMenuVisibility(!menuVisibility)}>
-        Settings
+        settings
       </StyledButton>
       <ScoreBoard
         difficulty={currentDifficulty}
