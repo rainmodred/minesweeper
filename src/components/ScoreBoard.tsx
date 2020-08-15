@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
+import Smile from './Smile';
 import useInterval from '../hooks/useInterval';
 
 import face1 from '../images/face1.png';
@@ -9,7 +10,7 @@ import face3 from '../images/face3.png';
 import face4 from '../images/face4.png';
 import Digit from './Digit';
 import { Difficulty } from '../core/difficulties';
-import { GameState } from './Game';
+import { GameState, Face } from './Game';
 
 const StyledScoreBoard = styled.div`
   display: flex;
@@ -36,31 +37,8 @@ const DigitsContainer = styled.div`
   align-items: center;
 `;
 
-interface SmileProps {
-  gameState: GameState;
-}
-
-const Smile = styled.div<SmileProps>`
-  width: 40px;
-  height: 40px;
-  border-top: 4px solid #fff;
-  border-left: 4px solid #fff;
-  border-bottom: 5px solid #808080;
-  border-right: 5px solid #808080;
-  background: url('${(props) =>
-    props.gameState === GameState.won
-      ? face3
-      : props.gameState === GameState.lost
-      ? face4
-      : face1}')no-repeat;
-  background-size: 30px;
-  background-position: center;
-  &:active {
-    border-top: 4px solid #808080;
-    border-left: 4px solid #808080;
-    border-bottom: 2px solid #808080;
-    border-right: 2px solid #808080;
-  }
+const StyledImage = styled.img`
+  width: 100%;
 `;
 
 interface ScoreBoardProps {
@@ -68,6 +46,7 @@ interface ScoreBoardProps {
   flagsLeft: number;
   gameState: GameState;
   onNewGame: (difficulty: Difficulty) => void;
+  face: Face;
 }
 
 const ScoreBoard: React.FC<ScoreBoardProps> = ({
@@ -75,6 +54,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
   flagsLeft,
   gameState,
   onNewGame,
+  face,
 }) => {
   const [seconds, setSeconds] = useState(0);
 
@@ -121,12 +101,37 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
     onNewGame(difficulty);
   }
 
+  function renderSmile() {
+    let src = '';
+
+    switch (face) {
+      case Face.oh:
+        src = face2;
+        break;
+      case Face.won:
+        src = face3;
+        break;
+      case Face.lost:
+        src = face4;
+        break;
+      default:
+        src = face1;
+        break;
+    }
+
+    return (
+      <Smile onNewGame={handleNewGameClick}>
+        <StyledImage src={src} alt="" />
+      </Smile>
+    );
+  }
+
   return (
     <StyledScoreBoard>
       <DigitsContainer>
         {renderDigits(splitNumToDigits(flagsLeft))}
       </DigitsContainer>
-      <Smile onClick={handleNewGameClick} gameState={gameState} />
+      {renderSmile()}
       <DigitsContainer>
         {renderDigits(splitNumToDigits(seconds))}
       </DigitsContainer>

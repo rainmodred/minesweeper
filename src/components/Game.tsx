@@ -35,10 +35,17 @@ const StyledButton = styled.span`
 `;
 
 export enum GameState {
+  lost = 'lost',
+  won = 'won',
+  started = 'started',
+  initial = 'initial',
+}
+
+export enum Face {
+  smile,
   lost,
   won,
-  started,
-  initial,
+  oh,
 }
 
 let grid = new Grid(9, 9, 2);
@@ -69,7 +76,19 @@ const Game: React.FC = () => {
     difficulties.Beginner
   );
   const [menuVisibility, setMenuVisibility] = useState(false);
+  const [face, setFace] = useState(Face.smile);
 
+  useEffect(() => {
+    function handleMouseUp() {
+      if (gameState === GameState.started || gameState === GameState.initial) {
+        setFace(Face.smile);
+      }
+    }
+
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => window.removeEventListener('mouseup', handleMouseUp);
+  }, [gameState]);
   // debug
   useEffect(() => {
     grid.print();
@@ -78,12 +97,14 @@ const Game: React.FC = () => {
   function gameOver() {
     grid.reveal();
     setGameState(GameState.lost);
+    setFace(Face.lost);
     setGameboard(grid.matrix.slice());
   }
 
   function checkForWin() {
     if (grid.width * grid.height - grid.minesQuantity === grid.openedCells) {
       setGameState(GameState.won);
+      setFace(Face.won);
       grid.reveal();
       setGameboard(grid.matrix.slice());
     }
@@ -127,6 +148,7 @@ const Game: React.FC = () => {
   function handleNewGame(difficulty: Difficulty) {
     setCurrentDifficulty(difficulty);
     setGameState(GameState.initial);
+    setFace(Face.smile);
     setFlagsLeft(difficulty.minesQuantity);
     grid = new Grid(
       difficulty.height,
@@ -135,6 +157,12 @@ const Game: React.FC = () => {
     );
     setGameboard(grid.matrix.slice());
     grid.print();
+  }
+
+  function handleFaceChange(newFace: Face) {
+    if (gameState === GameState.started || gameState === GameState.initial) {
+      setFace(newFace);
+    }
   }
 
   return (
@@ -148,6 +176,7 @@ const Game: React.FC = () => {
         settings
       </StyledButton>
       <ScoreBoard
+        face={face}
         difficulty={currentDifficulty}
         flagsLeft={flagsLeft}
         onNewGame={handleNewGame}
@@ -159,6 +188,7 @@ const Game: React.FC = () => {
         gameboard={gameboard}
         onLeftClick={handleGameboardLeftClick}
         onRightClick={handleGameboardRightClick}
+        onFaceChange={handleFaceChange}
       />
     </Container>
   );

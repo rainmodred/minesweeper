@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import Field from './Field';
 import Cell from '../core/Cell';
+import { Face } from './Game';
 
 interface ContainerProps {
   height: number;
@@ -29,6 +30,7 @@ interface GameboardProps {
   gameboard: Cell[][] | null;
   onLeftClick: (row: number, col: number) => void;
   onRightClick: (row: number, col: number) => void;
+  onFaceChange: (face: Face) => void;
 }
 
 const Gameboard: React.FC<GameboardProps> = ({
@@ -37,6 +39,7 @@ const Gameboard: React.FC<GameboardProps> = ({
   gameboard,
   onLeftClick,
   onRightClick,
+  onFaceChange,
 }) => {
   function handleLeftClick(event: React.MouseEvent<HTMLElement>) {
     const cell = event.target as HTMLElement;
@@ -79,6 +82,7 @@ const Gameboard: React.FC<GameboardProps> = ({
       height={height}
       width={width}
       onClick={handleLeftClick}
+      onMouseDown={() => onFaceChange(Face.oh)}
       onContextMenu={handleRightClick}
     >
       {renderGameboard()}
