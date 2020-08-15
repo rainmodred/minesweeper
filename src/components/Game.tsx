@@ -139,7 +139,12 @@ const Game: React.FC = () => {
 
   function handleGameboardRightClick(row: number, col: number) {
     if (gameState === GameState.initial || gameState === GameState.started) {
-      setFlagsLeft(flagsLeft - 1);
+      const currentCell = grid.getCell(row, col);
+      if (currentCell.isFlagged) {
+        setFlagsLeft(flagsLeft + 1);
+      } else {
+        setFlagsLeft(flagsLeft - 1);
+      }
       grid.toggleFlag(row, col);
       setGameboard(grid.matrix.slice());
     }
