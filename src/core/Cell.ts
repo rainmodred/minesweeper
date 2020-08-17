@@ -1,7 +1,7 @@
 export enum CellState {
   opened,
   closed,
-  flagged
+  flagged,
 }
 
 export default class Cell {
@@ -17,11 +17,7 @@ export default class Cell {
 
   value: number;
 
-  constructor(id: number,
-    row: number,
-    col: number,
-  ) {
-
+  constructor(id: number, row: number, col: number) {
     this.id = id;
     this.row = row;
     this.col = col;
@@ -51,5 +47,4 @@ export default class Cell {
       this.state = CellState.opened;
     }
   }
-
 }

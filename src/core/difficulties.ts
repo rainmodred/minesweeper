@@ -4,9 +4,8 @@ export enum Options {
   Expert = 'Expert',
 }
 
-
 export type Difficulties = {
-  [key in Options]: Difficulty
+  [key in Options]: Difficulty;
 };
 
 export type Difficulty = {
@@ -32,5 +31,3 @@ export const difficulties: Difficulties = {
     minesQuantity: 99,
   },
 };
-
-

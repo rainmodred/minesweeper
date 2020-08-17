@@ -11,15 +11,16 @@ describe('Grid', () => {
     expect(grid.matrix[8].length).toEqual(grid.width);
   });
 
-  // todo difficulty test
   it('has 10 mines', () => {
     let mines = 0;
 
-    grid.matrix.forEach((row) => row.forEach((cell) => {
-      if (cell.hasMine) {
-        mines++;
-      }
-    }));
+    grid.matrix.forEach((row) =>
+      row.forEach((cell) => {
+        if (cell.hasMine) {
+          mines++;
+        }
+      })
+    );
 
     expect(grid.minesQuantity).toEqual(mines);
     expect(grid.minesQuantity).toEqual(10);
@@ -35,7 +36,7 @@ describe('Grid', () => {
     expect(cell.isOpened).toBeTruthy();
   });
 
-  it('can\'t open flagged cell', () => {
+  it("can't open flagged cell", () => {
     const cell = grid.getCell(0, 0);
 
     expect(cell.isOpened).toBeFalsy();
@@ -84,7 +85,6 @@ describe('Grid', () => {
     grid.minesQuantity = 8;
 
     grid.showCell(0, 0);
-    grid.print();
 
     expect(grid.getCell(0, 0).isOpened).toBeTruthy();
     expect(grid.getCell(0, 1).isOpened).toBeTruthy();
@@ -118,8 +118,6 @@ describe('Grid', () => {
 
     grid.moveMine(1, 1);
 
-    grid.print();
-
     let movedCell = null;
     for (const row of grid.matrix) {
       for (const cell of row) {
@@ -133,8 +131,13 @@ describe('Grid', () => {
     let aroundCells = true;
     for (let i = row - 1; i <= row + 1; i++) {
       for (let j = col - 1; j <= col + 1; j++) {
-        if (i >= 0 && i < grid.matrix.length && j >= 0 && j < grid.matrix[0].length) {
-          if (grid.matrix[i][j].value === 0 && (i !== row && j !== col)) {
+        if (
+          i >= 0 &&
+          i < grid.matrix.length &&
+          j >= 0 &&
+          j < grid.matrix[0].length
+        ) {
+          if (grid.matrix[i][j].value === 0 && i !== row && j !== col) {
             aroundCells = false;
             break;
           }
@@ -145,4 +148,3 @@ describe('Grid', () => {
     expect(aroundCells).toBeTruthy();
   });
 });
-

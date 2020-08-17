@@ -93,38 +93,10 @@ const Field: React.FC<FieldProps> = ({ state, hasMine, row, col, value }) => {
         flagged={state === CellState.flagged}
         data-row={row}
         data-col={col}
-        // onClick={() => leftClick(row, col)}
-        // onContextMenu={(event) => rightClick(event, row, col)}
       />
     );
 
   return field;
 };
-
-// const Cell = ({
-//   hasMine,
-//   hasFlag,
-//   isOpened,
-//   neighbourMineCount,
-//   row,
-//   col,
-//   leftClick,
-//   rightClick,
-// }) => {
-//   const neigbours =
-//     hasMine || neighbourMineCount === 0 ? null : neighbourMineCount;
-//   const cell = isOpened ? (
-//     <OpenedCell neigbours={neigbours} hasMine={hasMine}>
-//       {neigbours}
-//     </OpenedCell>
-//   ) : (
-//     <ClosedCell
-//       hasFlag={hasFlag}
-//       onClick={() => leftClick(row, col)}
-//       onContextMenu={(event) => rightClick(event, row, col)}
-//     />
-//   );
-//   return cell;
-// };
 
 export default Field;

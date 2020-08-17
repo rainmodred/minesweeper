@@ -12,11 +12,7 @@ export default class Grid {
 
   openedCells: number;
 
-  constructor(
-    height: number,
-    width: number,
-    minesQuantity: number) {
-
+  constructor(height: number, width: number, minesQuantity: number) {
     this.matrix = [];
     this.height = height;
     this.width = width;
@@ -60,8 +56,8 @@ export default class Grid {
   }
 
   private setCellsValue() {
-    return this.matrix.map(row => {
-      return row.map(cell => {
+    return this.matrix.map((row) => {
+      return row.map((cell) => {
         if (!cell.hasMine) {
           cell.value = this.findMinesAround(cell.row, cell.col);
         }
@@ -74,7 +70,12 @@ export default class Grid {
     let minesAround = 0;
     for (let i = row - 1; i <= row + 1; i++) {
       for (let j = col - 1; j <= col + 1; j++) {
-        if (i >= 0 && i < this.matrix.length && j >= 0 && j < this.matrix[0].length) {
+        if (
+          i >= 0 &&
+          i < this.matrix.length &&
+          j >= 0 &&
+          j < this.matrix[0].length
+        ) {
           if (this.matrix[i][j].hasMine) {
             minesAround++;
           }
@@ -145,7 +146,9 @@ export default class Grid {
   }
 
   reveal() {
-    this.matrix.forEach((row) => row.map((cell) => cell.hasMine && cell.openCell()));
+    this.matrix.forEach((row) =>
+      row.map((cell) => cell.hasMine && cell.openCell())
+    );
   }
 
   private floodFill(cell: Cell) {
@@ -169,7 +172,6 @@ export default class Grid {
         } else if (!currentCell.isOpened) {
           currentCell.openCell();
           this.openedCells++;
-
         }
       }
       // EAST
@@ -183,7 +185,6 @@ export default class Grid {
         } else if (!currentCell.isOpened) {
           currentCell.openCell();
           this.openedCells++;
-
         }
       }
       // NORTH
@@ -197,7 +198,6 @@ export default class Grid {
         } else if (!currentCell.isOpened) {
           currentCell.openCell();
           this.openedCells++;
-
         }
       }
       // SOUTH
@@ -211,10 +211,8 @@ export default class Grid {
         } else if (!currentCell.isOpened) {
           currentCell.openCell();
           this.openedCells++;
-
         }
       }
     }
   }
 }
-
