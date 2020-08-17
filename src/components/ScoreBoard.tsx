@@ -74,9 +74,17 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
     gameState === GameState.started ? 1000 : null
   );
 
-  function renderDigits(arr: string[]) {
-    return arr.map((digit, index) => {
-      return <Digit key={`D${index}`} digit={digit} />;
+  function renderFlagsLeft(arr: string[]) {
+    let key = 0;
+    return arr.map((digit) => {
+      return <Digit key={`D${key++}`} digit={digit} />;
+    });
+  }
+
+  function renderTime(arr: string[]) {
+    let key = 3;
+    return arr.map((digit) => {
+      return <Digit key={`D${key++}`} digit={digit} />;
     });
   }
 
@@ -129,12 +137,10 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
   return (
     <StyledScoreBoard>
       <DigitsContainer>
-        {renderDigits(splitNumToDigits(flagsLeft))}
+        {renderFlagsLeft(splitNumToDigits(flagsLeft))}
       </DigitsContainer>
       {renderSmile()}
-      <DigitsContainer>
-        {renderDigits(splitNumToDigits(seconds))}
-      </DigitsContainer>
+      <DigitsContainer>{renderTime(splitNumToDigits(seconds))}</DigitsContainer>
     </StyledScoreBoard>
   );
 };
