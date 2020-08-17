@@ -85,10 +85,6 @@ export default class Grid {
     return minesAround;
   }
 
-  print() {
-    console.table(this.matrix.map((row) => row.map((cell: Cell) => cell.value)));
-  }
-
   createGrid(height: number, width: number, minesQuantity: number) {
     let id = 0;
 
@@ -113,10 +109,6 @@ export default class Grid {
     this.getCell(randomCell.row, randomCell.col).value = 0;
 
     this.setCellsValue();
-  }
-
-  getValue(row: number, col: number) {
-    return this.matrix[row][col].value;
   }
 
   getCell(row: number, col: number) {

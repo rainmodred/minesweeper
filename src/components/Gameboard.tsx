@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import Field from './Field';
 import Cell from '../core/Cell';
-import { Face } from './Game';
+
+import { Face } from '../types';
 
 interface ContainerProps {
   height: number;

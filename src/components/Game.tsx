@@ -7,6 +7,7 @@ import Cell from '../core/Cell';
 import ScoreBoard from './ScoreBoard';
 import Menu from './Menu';
 import { Difficulty, difficulties } from '../core/difficulties';
+import { GameState, Face } from '../types';
 
 const Container = styled.div`
   display: inline-block;
@@ -34,39 +35,11 @@ const StyledButton = styled.span`
   user-select: none;
 `;
 
-export enum GameState {
-  lost = 'lost',
-  won = 'won',
-  started = 'started',
-  initial = 'initial',
-}
-
-export enum Face {
-  smile,
-  lost,
-  won,
-  oh,
-}
-
-let grid = new Grid(9, 9, 2);
-// grid.matrix[0][5].hasMine = true;
-// grid.matrix[1][4].hasMine = true;
-// grid.matrix[2][4].hasMine = true;
-// grid.matrix[3][4].hasMine = true;
-// grid.matrix[3][3].hasMine = true;
-// grid.matrix[3][2].hasMine = true;
-// grid.matrix[3][1].hasMine = true;
-// grid.matrix[3][0].hasMine = true;
-
-// grid.matrix[2][0].value = 2;
-// grid.matrix[2][1].value = 3;
-// grid.matrix[2][2].value = 3;
-// grid.matrix[2][3].value = 5;
-// grid.matrix[1][3].value = 3;
-// grid.matrix[0][3].value = 1;
-// grid.matrix[0][4].value = 2;
-
-// grid.minesQuantity = 8;
+let grid = new Grid(
+  difficulties.Beginner.height,
+  difficulties.Beginner.width,
+  difficulties.Beginner.minesQuantity
+);
 
 const Game: React.FC = () => {
   const [gameboard, setGameboard] = useState<Cell[][] | null>(grid.matrix);
@@ -89,10 +62,6 @@ const Game: React.FC = () => {
 
     return () => window.removeEventListener('mouseup', handleMouseUp);
   }, [gameState]);
-  // debug
-  useEffect(() => {
-    grid.print();
-  }, []);
 
   function gameOver() {
     grid.reveal();
@@ -161,7 +130,6 @@ const Game: React.FC = () => {
       difficulty.minesQuantity
     );
     setGameboard(grid.matrix.slice());
-    grid.print();
   }
 
   function handleFaceChange(newFace: Face) {

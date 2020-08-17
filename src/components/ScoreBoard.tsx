@@ -10,7 +10,7 @@ import face3 from '../images/face3.png';
 import face4 from '../images/face4.png';
 import Digit from './Digit';
 import { Difficulty } from '../core/difficulties';
-import { GameState, Face } from './Game';
+import { GameState, Face } from '../types';
 
 const StyledScoreBoard = styled.div`
   display: flex;
