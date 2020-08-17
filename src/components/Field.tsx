@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 
 import bomb from '../images/bomb.png';
@@ -80,23 +80,25 @@ interface FieldProps {
   value: number;
 }
 
-const Field: React.FC<FieldProps> = ({ state, hasMine, row, col, value }) => {
-  const color = getColor(value);
+const Field: React.FC<FieldProps> = memo(
+  ({ state, hasMine, row, col, value }) => {
+    const color = getColor(value);
 
-  const field =
-    state === CellState.opened ? (
-      <OpenedField color={color} hasMine={hasMine}>
-        {value > 0 && value}
-      </OpenedField>
-    ) : (
-      <ClosedField
-        flagged={state === CellState.flagged}
-        data-row={row}
-        data-col={col}
-      />
-    );
+    const field =
+      state === CellState.opened ? (
+        <OpenedField color={color} hasMine={hasMine}>
+          {value > 0 && value}
+        </OpenedField>
+      ) : (
+        <ClosedField
+          flagged={state === CellState.flagged}
+          data-row={row}
+          data-col={col}
+        />
+      );
 
-  return field;
-};
+    return field;
+  }
+);
 
 export default Field;
