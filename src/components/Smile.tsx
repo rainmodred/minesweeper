@@ -19,6 +19,7 @@ const Container = styled.div`
 `;
 
 interface SmileProps {
+  children: React.ReactNode;
   onNewGame: () => void;
 }
 

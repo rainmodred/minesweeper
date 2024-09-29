@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import bomb from '../images/bomb.png';
 import flag from '../images/flag.png';
-import { CellState } from '../core/Cell';
+import { CellState } from '../game/Cell';
 
 type Colors = {
   [key: number]: string;
@@ -36,7 +36,7 @@ const StyledField = styled.div`
 `;
 
 interface ClosedFieldProps {
-  flagged: boolean;
+  $flagged: boolean;
 }
 
 const ClosedField = styled(StyledField)<ClosedFieldProps>`
@@ -45,7 +45,7 @@ const ClosedField = styled(StyledField)<ClosedFieldProps>`
   border-bottom: 3px solid #808080;
   border-right: 3px solid #808080;
 
-  background-image: url('${(props) => (props.flagged ? flag : null)}');
+  background-image: url('${(props) => (props.$flagged ? flag : null)}');
   background-repeat: no-repeat;
   background-size: 65%;
   background-position: center;
@@ -58,7 +58,7 @@ const ClosedField = styled(StyledField)<ClosedFieldProps>`
 `;
 
 interface OpenedFieldProps {
-  hasMine: boolean;
+  $hasMine: boolean;
   color: string;
 }
 
@@ -66,7 +66,7 @@ const OpenedField = styled(StyledField)<OpenedFieldProps>`
   border: none;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
-  background-image: url('${(props) => (props.hasMine ? bomb : null)}');
+  background-image: url('${(props) => (props.$hasMine ? bomb : null)}');
   background-repeat: no-repeat;
   background-size: cover;
   color: ${(props) => props.color};
@@ -86,12 +86,12 @@ const Field: React.FC<FieldProps> = memo(
 
     const field =
       state === CellState.opened ? (
-        <OpenedField color={color} hasMine={hasMine}>
+        <OpenedField color={color} $hasMine={hasMine}>
           {value > 0 && value}
         </OpenedField>
       ) : (
         <ClosedField
-          flagged={state === CellState.flagged}
+          $flagged={state === CellState.flagged}
           data-row={row}
           data-col={col}
         />
@@ -100,5 +100,7 @@ const Field: React.FC<FieldProps> = memo(
     return field;
   }
 );
+
+Field.displayName = 'Field';
 
 export default Field;

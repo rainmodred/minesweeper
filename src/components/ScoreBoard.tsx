@@ -9,7 +9,7 @@ import face2 from '../images/face2.png';
 import face3 from '../images/face3.png';
 import face4 from '../images/face4.png';
 import Digit from './Digit';
-import { Difficulty } from '../core/difficulties';
+import { Difficulty } from '../game/difficulties';
 import { GameState, Face } from '../types';
 
 const StyledScoreBoard = styled.div`
@@ -59,9 +59,6 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
-    if (gameState === GameState.started) {
-      setSeconds(1);
-    }
     if (gameState === GameState.initial) {
       setSeconds(0);
     }

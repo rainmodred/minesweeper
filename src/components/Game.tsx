@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import GameBoard from './Gameboard';
-import Grid from '../core/Grid';
-import Cell from '../core/Cell';
+import Grid from '../game/Grid';
+import Cell from '../game/Cell';
 import ScoreBoard from './ScoreBoard';
 import Menu from './Menu';
-import { Difficulty, difficulties } from '../core/difficulties';
+import { Difficulty, difficulties } from '../game/difficulties';
 import { GameState, Face } from '../types';
 
 const Container = styled.div`

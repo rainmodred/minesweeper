@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Field from './Field';
-import Cell from '../core/Cell';
+import Cell from '../game/Cell';
 
 import { Face } from '../types';
 
@@ -44,7 +44,7 @@ const Gameboard: React.FC<GameboardProps> = ({
 }) => {
   function handleLeftClick(event: React.MouseEvent<HTMLElement>) {
     const cell = event.target as HTMLElement;
-    const { row, col } = cell?.dataset!;
+    const { row, col } = cell.dataset;
     if (row && col) {
       onLeftClick(+row, +col);
     }
@@ -53,7 +53,7 @@ const Gameboard: React.FC<GameboardProps> = ({
   function handleRightClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
     const cell = event.target as HTMLElement;
-    const { row, col } = cell?.dataset!;
+    const { row, col } = cell.dataset;
     if (row && col) {
       onRightClick(+row, +col);
     }

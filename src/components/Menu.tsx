@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Options, difficulties, Difficulty } from '../core/difficulties';
+import { Options, difficulties, Difficulty } from '../game/difficulties';
 
 interface StyledMenuProps {
-  visible: boolean;
+  $visible: boolean;
 }
 
 const StyledMenu = styled.div<StyledMenuProps>`
-  display: ${(props) => (props.visible ? '' : 'none')};
+  display: ${(props) => (props.$visible ? '' : 'none')};
   border: 1px solid #444444;
   width: 300px;
   position: absolute;
@@ -96,7 +96,7 @@ const Menu: React.FC<MenuProps> = ({ visible, onCloseMenu, onNewGame }) => {
   }
 
   return (
-    <StyledMenu visible={visible}>
+    <StyledMenu $visible={visible}>
       <MenuHeader>
         Game <CloseMenuButton onClick={onCloseMenu}>X</CloseMenuButton>
       </MenuHeader>
