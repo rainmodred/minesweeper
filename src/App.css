@@ -1,0 +1,83 @@
+.gameboard {
+  display: grid;
+  grid-template: repeat(9, 24px) / repeat(9, 24px);
+
+  /* TODO: remove late */
+  background-color: #c0c0c0;
+  box-shadow: 3px 3px 1px 0px rgba(128, 128, 128, 1);
+  padding: 5px;
+}
+
+/* Move font to body   */
+.cell {
+  font-family: 'Changa One', sans-serif;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  user-select: none;
+
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #808080;
+  border-right: 3px solid #808080;
+
+  /* background-image: url('${(props) => (props.$flagged ? flag : null)}'); */
+  background-repeat: no-repeat;
+  background-size: 65%;
+  background-position: center;
+
+  &:active {
+    border: none;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+  }
+}
+
+.flag {
+  background-image: url('./images/flag.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.mine {
+  background-image: url('./images/mine.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.opened {
+  border: none;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  /* background-image: url('${(props) => (props.$hasMine ? bomb : null)}'); */
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* color: ${(props) => props.color}; */
+}
+
+.number-1 {
+  color: #0000ff;
+}
+.number-2 {
+  color: #008200;
+}
+.number-3 {
+  color: #ff0000;
+}
+.number-4 {
+  color: #000084;
+}
+.number-5 {
+  color: #840000;
+}
+.number-6 {
+  color: #008284;
+}
+.number-7 {
+  color: #840084;
+}
+.number-8 {
+  color: #757575;
+}

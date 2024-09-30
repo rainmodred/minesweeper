@@ -24,7 +24,7 @@ function getColor(num: number): string {
   return colors[num];
 }
 
-const StyledField = styled.div`
+export const StyledField = styled.div`
   font-family: 'Changa One', sans-serif;
   font-size: 24px;
   width: 24px;
@@ -39,7 +39,7 @@ interface ClosedFieldProps {
   $flagged: boolean;
 }
 
-const ClosedField = styled(StyledField)<ClosedFieldProps>`
+export const ClosedField = styled(StyledField)<ClosedFieldProps>`
   border-top: 3px solid #fff;
   border-left: 3px solid #fff;
   border-bottom: 3px solid #808080;
@@ -62,7 +62,7 @@ interface OpenedFieldProps {
   color: string;
 }
 
-const OpenedField = styled(StyledField)<OpenedFieldProps>`
+export const OpenedField = styled(StyledField)<OpenedFieldProps>`
   border: none;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
@@ -94,6 +94,7 @@ const Field: React.FC<FieldProps> = memo(
           $flagged={state === CellState.flagged}
           data-row={row}
           data-col={col}
+          data-testid={`${row}:${col}`}
         />
       );
 

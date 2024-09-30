@@ -85,6 +85,7 @@ const Gameboard: React.FC<GameboardProps> = ({
       onClick={handleLeftClick}
       onMouseDown={() => onFaceChange(Face.oh)}
       onContextMenu={handleRightClick}
+      data-testid="gameboard"
     >
       {renderGameboard()}
     </Container>

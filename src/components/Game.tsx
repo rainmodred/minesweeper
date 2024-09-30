@@ -35,13 +35,11 @@ const StyledButton = styled.span`
   user-select: none;
 `;
 
-let grid = new Grid(
-  difficulties.Beginner.height,
-  difficulties.Beginner.width,
-  difficulties.Beginner.minesQuantity
-);
+interface GameProps {
+  grid: Grid;
+}
 
-const Game: React.FC = () => {
+const Game: React.FC<GameProps> = ({ grid }) => {
   const [gameboard, setGameboard] = useState<Cell[][] | null>(grid.matrix);
   const [gameState, setGameState] = useState(GameState.initial);
   const [flagsLeft, setFlagsLeft] = useState(grid.minesQuantity);
