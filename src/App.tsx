@@ -1,42 +1,26 @@
 import React, { useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
 import './App.css';
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const GlobalStyle = createGlobalStyle`
-  *, *::after, *::before {
-    padding: 0;
-    margin: 0;
-    box-sizing: inherit;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  body {
-    box-sizing: border-box;
-    background-color: #262626;
-  }
-`;
 
 interface Cell {
   state: 'opened' | 'closed';
   value: 'mine' | number;
-  flag: boolean;
+  hasFlag: boolean;
 }
 
 function getMineCells(
   width: number,
   height: number,
-  mineCount: number
+  mineCount: number,
+  skipKey?: string
 ): Set<string> {
   const res = new Set<string>();
   while (res.size < mineCount) {
     const row = Math.floor(Math.random() * height);
     const col = Math.floor(Math.random() * width);
     const key = `${row}:${col}`;
-    res.add(key);
+    if (key !== skipKey) {
+      res.add(key);
+    }
   }
   return res;
 }
@@ -44,19 +28,24 @@ function getMineCells(
 type IGameboard = Map<string, Cell>;
 
 // Safe first click?
-function createGrid(width: number, height: number, mineCount: number) {
+function createGameboard(
+  width: number,
+  height: number,
+  mineCount: number,
+  skipKey?: string
+) {
   const grid: IGameboard = new Map();
   const state: 'opened' | 'closed' = 'closed';
-  const mineCells = getMineCells(width, height, mineCount);
+  const mineCells = getMineCells(width, height, mineCount, skipKey);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       const key = `${i}:${j}`;
       if (mineCells.has(key)) {
-        grid.set(key, { state, value: 'mine', flag: false });
+        grid.set(key, { state, value: 'mine', hasFlag: false });
       } else {
         const count = getMinesCount(mineCells, key);
-        grid.set(key, { state, value: count, flag: false });
+        grid.set(key, { state, value: count, hasFlag: false });
       }
     }
   }
@@ -116,30 +105,55 @@ function revealArea(gameboard: IGameboard, key: string): IGameboard {
   return gameboard;
 }
 
-function NewGame() {
-  const [gameboard, setGameboard] = useState(createGrid(9, 9, 9));
+// TODO: remove
+function mineCell(gameboard: IGameboard) {
+  for (const [key, value] of gameboard) {
+    if (value.value === 'mine') {
+      console.log(key);
+      break;
+    }
+  }
+}
+
+interface GameboardProps {
+  started: boolean;
+}
+
+function Gameboard({}: GameboardProps) {
+  const [gameboard, setGameboard] = useState(createGameboard(9, 9, 9));
+  const [isStarted, setIsStarted] = useState(false);
+
+  function newGame() {
+    setIsStarted(false);
+    setGameboard(createGameboard(9, 9, 9));
+  }
 
   function dig(key: string) {
-    const cell = gameboard.get(key);
-    if (!cell) {
-      throw new Error(`Cell ${key} not found`);
+    const cell = gameboard.get(key)!;
+
+    let newBoard = null;
+    if (!isStarted) {
+      setIsStarted(true);
+      if (cell.value === 'mine') {
+        newBoard = createGameboard(9, 9, 9, key);
+        setGameboard(newBoard);
+      }
     }
 
-    // if (cell.value === 0) {
-    // }
+    if (cell.hasFlag) {
+      return;
+    }
 
-    const temp = new Map(gameboard);
+    const temp = new Map(newBoard ? newBoard : gameboard);
     setGameboard(revealArea(temp, key));
-
-    // setGameboard(
-    //   new Map(gameboard).set(key, { state: 'opened', value: cell.value })
-    // );
   }
 
   function flag(e: React.MouseEvent, key: string) {
     e.preventDefault();
     const cell = gameboard.get(key)!;
-    setGameboard(new Map(gameboard).set(key, { ...cell, flag: !cell.flag }));
+    setGameboard(
+      new Map(gameboard).set(key, { ...cell, hasFlag: !cell.hasFlag })
+    );
   }
 
   return (
@@ -150,7 +164,7 @@ function NewGame() {
             <div
               onClick={() => dig(key)}
               onContextMenu={(e) => flag(e, key)}
-              className={`cell ${cell.flag ? 'flag' : ''}`}
+              className={`cell ${cell.hasFlag ? 'flag' : ''}`}
               key={key}
             ></div>
           );
@@ -180,12 +194,30 @@ function NewGame() {
   // return <>{[...grid].map()}</>;
 }
 
+interface ScoreBoardProps {
+  mineCount: number;
+}
+
+function ScoreBoard({ mineCount }: ScoreBoardProps) {
+  const [flags, setFlags] = useState(mineCount);
+
+  return (
+    <div>
+      <p>flags:{}</p>
+      <button>New Game</button>
+      <p>time: {} </p>
+    </div>
+  );
+}
+
 export default function App() {
   return (
-    <Container>
-      <GlobalStyle />
+    <div className="app">
       {/* <Game grid={grid} /> */}
-      <NewGame />
-    </Container>
+      <div className="game">
+        <ScoreBoard />
+        <Gameboard />
+      </div>
+    </div>
   );
 }

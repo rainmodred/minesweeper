@@ -1,3 +1,31 @@
+*,
+*::after,
+*::before {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+  font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  box-sizing: border-box;
+  background-color: #262626;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+}
+
+.game {
+  display: inline-block;
+  margin-top: 5%;
+  min-height: 300px;
+  background-color: #c0c0c0;
+  /* box-shadow: 3px 3px 1px 0px rgba(128, 128, 128, 1); */
+  padding: 9px;
+  position: relative;
+}
+
 .gameboard {
   display: grid;
   grid-template: repeat(9, 24px) / repeat(9, 24px);
@@ -40,6 +68,8 @@
   background-image: url('./images/flag.png');
   background-repeat: no-repeat;
   background-size: cover;
+  background-size: 65%;
+  background-position: center;
 }
 
 .mine {
