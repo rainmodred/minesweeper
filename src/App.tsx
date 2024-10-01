@@ -263,6 +263,13 @@ export default function App() {
   const [face, setFace] = useState<Face>('idle');
 
   useEffect(() => {
+    const count = [...gameBoard].filter(([, c]) => c.state === 'closed').length;
+    if (count === 9) {
+      setGameState('won');
+    }
+  }, [gameBoard]);
+
+  useEffect(() => {
     function handleMouseUp() {
       if (gameState === 'started' || gameState === 'idle') {
         setFace('idle');
