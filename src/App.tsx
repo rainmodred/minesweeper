@@ -1,11 +1,10 @@
-import React, { useEffect, useInsertionEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import useInterval from './hooks/useInterval';
-import Game from './components/Game';
-import Grid from './game/Grid';
 
 import face1 from './images/face-idle.png';
 import Digit from './components/Digit';
+import { difficulties, Difficulty } from './game/difficulties';
 console.log(face1);
 
 interface Cell {
@@ -36,14 +35,12 @@ type IGameboard = Map<string, Cell>;
 
 // Safe first click?
 function createGameboard(
-  width: number,
-  height: number,
-  mineCount: number,
+  { width, height, minesCount }: Difficulty,
   skipKey?: string
 ) {
   const grid: IGameboard = new Map();
   const state: 'opened' | 'closed' = 'closed';
-  const mineCells = getMineCells(width, height, mineCount, skipKey);
+  const mineCells = getMineCells(width, height, minesCount, skipKey);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -91,24 +88,24 @@ function getMinesCount(grid: Set<string>, key: string) {
   return count;
 }
 
-function revealArea(gameboard: IGameboard, key: string): IGameboard {
-  const cell = gameboard.get(key)!;
+function revealArea(gameBoard: IGameboard, key: string): IGameboard {
+  const cell = gameBoard.get(key)!;
   if (cell.state === 'opened') {
-    return gameboard;
+    return gameBoard;
   }
 
   if (cell.value === 'mine' || cell.value > 0) {
-    gameboard.set(key, { ...cell, state: 'opened' });
-    return gameboard;
+    gameBoard.set(key, { ...cell, state: 'opened' });
+    return gameBoard;
   }
 
-  gameboard.set(key, { ...cell, state: 'opened' });
+  gameBoard.set(key, { ...cell, state: 'opened' });
 
   const neighbors = getNeighbors(key, 9, 9);
   for (const n of neighbors) {
-    revealArea(gameboard, n);
+    revealArea(gameBoard, n);
   }
-  return gameboard;
+  return gameBoard;
 }
 
 // TODO: remove
@@ -170,11 +167,12 @@ function Gameboard({
   }
 
   return (
-    <div className="gameboard">
+    <div className="gameboard" data-testid="gameboard">
       {[...gameBoard].map(([key, cell]) => {
         if (cell.state === 'closed') {
           return (
             <div
+              data-testid={key}
               onClick={() => onDig(key)}
               onContextMenu={(e) => flag(e, key)}
               onMouseDown={onDigTry}
@@ -188,17 +186,33 @@ function Gameboard({
           if (cell.value === 'mine') {
             //show clicked mine
             if (lostMine === key) {
-              return <div className="cell opened mine red" key={key}></div>;
+              return (
+                <div
+                  data-testid={key}
+                  data-mine={true}
+                  className="cell opened mine red"
+                  key={key}
+                ></div>
+              );
             }
-            return <div className="cell opened mine" key={key}></div>;
+            return (
+              <div
+                data-testid={key}
+                className="cell opened mine"
+                key={key}
+              ></div>
+            );
           }
 
           if (cell.value === 0) {
-            return <div className="cell opened" key={key}></div>;
+            return (
+              <div data-testid={key} className="cell opened" key={key}></div>
+            );
           }
 
           return (
             <div
+              data-testid={key}
               onClick={() => onChord(key)}
               className={`cell opened number-${cell.value}`}
               key={key}
@@ -254,13 +268,19 @@ function ScoreBoard({
   );
 }
 
-export default function App() {
-  const [gameBoard, setGameBoard] = useState(createGameboard(9, 9, 9));
+interface GameProps {
+  difficulty: Difficulty;
+}
+
+export function Game({ difficulty }: GameProps) {
+  const [gameBoard, setGameBoard] = useState(createGameboard(difficulty));
   const [gameState, setGameState] = useState<GameState>('idle');
 
   const [flagsCount, setFlagsCount] = useState(9);
   const [lostMine, setLostMine] = useState<string | null>(null);
   const [face, setFace] = useState<Face>('idle');
+
+  console.log([...gameBoard].filter(([, c]) => c.value === 'mine'));
 
   useEffect(() => {
     const count = [...gameBoard].filter(([, c]) => c.state === 'closed').length;
@@ -282,7 +302,7 @@ export default function App() {
   }, [gameState]);
 
   function newGame() {
-    setGameBoard(createGameboard(9, 9, 9));
+    setGameBoard(createGameboard(difficulty));
     setGameState('idle');
     setFlagsCount(9);
   }
@@ -321,7 +341,7 @@ export default function App() {
     if (gameState === 'idle') {
       setGameState('started');
       if (cell.value === 'mine') {
-        newBoard = createGameboard(9, 9, 9, key);
+        newBoard = createGameboard(difficulty, key);
         cell = newBoard.get(key)!;
         setGameBoard(newBoard);
       }
@@ -394,5 +414,13 @@ export default function App() {
         />
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <Game difficulty={difficulties['Beginner']} />
+    </>
   );
 }

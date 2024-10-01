@@ -11,23 +11,23 @@ export type Difficulties = {
 export type Difficulty = {
   width: number;
   height: number;
-  minesQuantity: number;
+  minesCount: number;
 };
 
 export const difficulties: Difficulties = {
   Beginner: {
     width: 9,
     height: 9,
-    minesQuantity: 10,
+    minesCount: 10,
   },
   Intermediate: {
     width: 16,
     height: 16,
-    minesQuantity: 40,
+    minesCount: 40,
   },
   Expert: {
     width: 30,
     height: 16,
-    minesQuantity: 99,
+    minesCount: 99,
   },
 };

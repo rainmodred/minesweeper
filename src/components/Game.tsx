@@ -122,12 +122,8 @@ const Game: React.FC<GameProps> = ({ grid }) => {
     setCurrentDifficulty(difficulty);
     setGameState(GameState.initial);
     setFace(Face.smile);
-    setFlagsLeft(difficulty.minesQuantity);
-    grid = new Grid(
-      difficulty.height,
-      difficulty.width,
-      difficulty.minesQuantity
-    );
+    setFlagsLeft(difficulty.minesCount);
+    grid = new Grid(difficulty.height, difficulty.width, difficulty.minesCount);
     setGameboard(grid.matrix.slice());
   }
 
