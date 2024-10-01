@@ -153,12 +153,14 @@ interface GameboardProps {
   onDig: (key: string) => void;
   onFlag: (key: string) => void;
   onDigTry: () => void;
+  onChord: (key: string) => void;
 }
 
 function Gameboard({
   gameBoard,
   lostMine,
   onDig,
+  onChord,
   onFlag,
   onDigTry,
 }: GameboardProps) {
@@ -184,7 +186,7 @@ function Gameboard({
 
         if (cell.state === 'opened') {
           if (cell.value === 'mine') {
-            //lost game mine
+            //show clicked mine
             if (lostMine === key) {
               return <div className="cell opened mine red" key={key}></div>;
             }
@@ -196,7 +198,11 @@ function Gameboard({
           }
 
           return (
-            <div className={`cell opened number-${cell.value}`} key={key}>
+            <div
+              onClick={() => onChord(key)}
+              className={`cell opened number-${cell.value}`}
+              key={key}
+            >
               {cell.value}
             </div>
           );
@@ -298,6 +304,10 @@ export default function App() {
     }
 
     let cell = gameBoard.get(key)!;
+    console.log('cell', cell, key);
+    if (cell.state === 'opened') {
+      return;
+    }
 
     //safe first click
     let newBoard = null;
@@ -321,8 +331,29 @@ export default function App() {
       return;
     }
 
-    const temp = new Map(newBoard ? newBoard : gameBoard);
-    setGameBoard(revealArea(temp, key));
+    // const temp = new Map(newBoard ? newBoard : gameBoard);
+
+    setGameBoard((gameBoard) => {
+      const temp = new Map(newBoard ? newBoard : gameBoard);
+      return revealArea(temp, key);
+    });
+  }
+
+  function chord(key: string) {
+    const cell = gameBoard.get(key)!;
+    const neighbors = getNeighbors(key, 9, 9);
+    const flaggedCells = neighbors
+      .map((k) => gameBoard.get(k))
+      .filter((c) => c?.hasFlag);
+    const hasEnoughtFlags = flaggedCells.length === cell.value;
+    if (!hasEnoughtFlags) {
+      return;
+    }
+    console.log({ hasEnoughtFlags, flaggedCells, neighbors });
+
+    for (const n of neighbors) {
+      dig(n);
+    }
   }
 
   function flag(key: string) {
@@ -352,6 +383,7 @@ export default function App() {
           onDig={dig}
           onFlag={flag}
           onDigTry={() => setFace('oh')}
+          onChord={chord}
         />
       </div>
     </div>
