@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import styled from 'styled-components';
 
-import bomb from '../images/bomb.png';
+import mine from '../images/mine.png';
 import flag from '../images/flag.png';
 import { CellState } from '../game/Cell';
 
@@ -66,7 +66,7 @@ export const OpenedField = styled(StyledField)<OpenedFieldProps>`
   border: none;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
-  background-image: url('${(props) => (props.$hasMine ? bomb : null)}');
+  background-image: url('${(props) => (props.$hasMine ? mine : null)}');
   background-repeat: no-repeat;
   background-size: cover;
   color: ${(props) => props.color};

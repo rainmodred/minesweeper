@@ -48,6 +48,7 @@ const Game: React.FC<GameProps> = ({ grid }) => {
   );
   const [menuVisibility, setMenuVisibility] = useState(false);
   const [face, setFace] = useState(Face.smile);
+  console.log(face);
 
   useEffect(() => {
     function handleMouseUp() {

@@ -87,6 +87,10 @@ body {
   /* color: ${(props) => props.color}; */
 }
 
+.red {
+  background-color: #e40016;
+}
+
 .number-1 {
   color: #0000ff;
 }

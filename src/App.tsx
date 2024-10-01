@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useInsertionEffect, useState } from 'react';
 import './App.css';
+import useInterval from './hooks/useInterval';
+import Game from './components/Game';
+import Grid from './game/Grid';
 
 interface Cell {
   state: 'opened' | 'closed';
@@ -86,7 +89,6 @@ function getMinesCount(grid: Set<string>, key: string) {
 
 function revealArea(gameboard: IGameboard, key: string): IGameboard {
   const cell = gameboard.get(key)!;
-  console.log(cell, key);
   if (cell.state === 'opened') {
     return gameboard;
   }
@@ -116,44 +118,16 @@ function mineCell(gameboard: IGameboard) {
 }
 
 interface GameboardProps {
-  started: boolean;
+  gameboard: IGameboard;
+  onDig: (key: string) => void;
+  onFlag: (key: string) => void;
+  lostMine: string | null;
 }
 
-function Gameboard({}: GameboardProps) {
-  const [gameboard, setGameboard] = useState(createGameboard(9, 9, 9));
-  const [isStarted, setIsStarted] = useState(false);
-
-  function newGame() {
-    setIsStarted(false);
-    setGameboard(createGameboard(9, 9, 9));
-  }
-
-  function dig(key: string) {
-    const cell = gameboard.get(key)!;
-
-    let newBoard = null;
-    if (!isStarted) {
-      setIsStarted(true);
-      if (cell.value === 'mine') {
-        newBoard = createGameboard(9, 9, 9, key);
-        setGameboard(newBoard);
-      }
-    }
-
-    if (cell.hasFlag) {
-      return;
-    }
-
-    const temp = new Map(newBoard ? newBoard : gameboard);
-    setGameboard(revealArea(temp, key));
-  }
-
+function Gameboard({ gameboard, onDig, onFlag, lostMine }: GameboardProps) {
   function flag(e: React.MouseEvent, key: string) {
     e.preventDefault();
-    const cell = gameboard.get(key)!;
-    setGameboard(
-      new Map(gameboard).set(key, { ...cell, hasFlag: !cell.hasFlag })
-    );
+    onFlag(key);
   }
 
   return (
@@ -162,7 +136,7 @@ function Gameboard({}: GameboardProps) {
         if (cell.state === 'closed') {
           return (
             <div
-              onClick={() => dig(key)}
+              onClick={() => onDig(key)}
               onContextMenu={(e) => flag(e, key)}
               className={`cell ${cell.hasFlag ? 'flag' : ''}`}
               key={key}
@@ -172,6 +146,10 @@ function Gameboard({}: GameboardProps) {
 
         if (cell.state === 'opened') {
           if (cell.value === 'mine') {
+            //lost game mine
+            if (lostMine === key) {
+              return <div className="cell opened mine red" key={key}></div>;
+            }
             return <div className="cell opened mine" key={key}></div>;
           }
 
@@ -194,29 +172,126 @@ function Gameboard({}: GameboardProps) {
   // return <>{[...grid].map()}</>;
 }
 
+type GameState = 'won' | 'lost' | 'started' | 'idle';
+
 interface ScoreBoardProps {
-  mineCount: number;
+  flagsCount: number;
+  onNewGame: () => void;
+  gameState: GameState;
 }
 
-function ScoreBoard({ mineCount }: ScoreBoardProps) {
-  const [flags, setFlags] = useState(mineCount);
+function ScoreBoard({ flagsCount, onNewGame, gameState }: ScoreBoardProps) {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    if (gameState === 'idle') {
+      setSeconds(0);
+    }
+  }, [gameState]);
+
+  useInterval(
+    () => setSeconds(seconds + 1),
+    gameState === 'started' ? 1000 : null
+  );
 
   return (
     <div>
-      <p>flags:{}</p>
-      <button>New Game</button>
-      <p>time: {} </p>
+      <p>flags:{flagsCount}</p>
+      <button onClick={onNewGame}>New Game</button>
+      <p>time: {seconds} </p>
     </div>
   );
 }
 
 export default function App() {
+  const [gameBoard, setGameBoard] = useState(createGameboard(9, 9, 9));
+  const [gameState, setGameState] = useState<GameState>('idle');
+
+  const [flagsCount, setFlagsCount] = useState(9);
+  const [lostMine, setLostMine] = useState<string | null>(null);
+
+  function newGame() {
+    setGameBoard(createGameboard(9, 9, 9));
+    setGameState('idle');
+    setFlagsCount(9);
+  }
+
+  function revelMines() {
+    const temp = new Map(gameBoard);
+    for (const [key, cell] of temp) {
+      if (cell.value === 'mine' && !cell.hasFlag) {
+        temp.set(key, { ...cell, state: 'opened' });
+      }
+    }
+
+    setGameBoard(temp);
+  }
+
+  function isGameOver(): boolean {
+    if (gameState === 'won' || gameState === 'lost') {
+      return true;
+    }
+    return false;
+  }
+
+  function dig(key: string) {
+    if (isGameOver()) {
+      return;
+    }
+
+    let cell = gameBoard.get(key)!;
+
+    //safe first click
+    let newBoard = null;
+    if (gameState === 'idle') {
+      setGameState('started');
+      if (cell.value === 'mine') {
+        newBoard = createGameboard(9, 9, 9, key);
+        cell = newBoard.get(key)!;
+        setGameBoard(newBoard);
+      }
+    }
+
+    if (cell.hasFlag) {
+      return;
+    }
+
+    if (cell.value === 'mine') {
+      setGameState('lost');
+      setLostMine(key);
+      revelMines();
+      return;
+    }
+
+    const temp = new Map(newBoard ? newBoard : gameBoard);
+    setGameBoard(revealArea(temp, key));
+  }
+
+  function flag(key: string) {
+    if (isGameOver()) {
+      return;
+    }
+    const cell = gameBoard.get(key)!;
+    setGameBoard(
+      new Map(gameBoard).set(key, { ...cell, hasFlag: !cell.hasFlag })
+    );
+    setFlagsCount(flagsCount - 1);
+  }
   return (
     <div className="app">
       {/* <Game grid={grid} /> */}
       <div className="game">
-        <ScoreBoard />
-        <Gameboard />
+        <ScoreBoard
+          onNewGame={newGame}
+          gameState={gameState}
+          flagsCount={flagsCount}
+        />
+        <Gameboard
+          gameboard={gameBoard}
+          onDig={dig}
+          onFlag={flag}
+          lostMine={lostMine}
+        />
       </div>
     </div>
   );
