@@ -30,7 +30,7 @@ function numberToSSD(key: string) {
 }
 
 function generateId() {
-  return `_${Math.random().toString(36).substr(2, 9)}`;
+  return `_${Math.random().toString(36).slice(2, 9)}`;
 }
 
 const Container = styled.div`
@@ -57,13 +57,11 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="v_top-left"
         points="3,4.6 0,9.6 0,39.4 3,44.4 6.1,39.4 6.1,9.6"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="v_top-left"
         points="3,4.6 0,9.6 0,39.4 3,44.4 6.1,39.4 6.1,9.6"
-        key={generateId()}
         fill="#141414"
       />
     ),
@@ -71,13 +69,11 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="v_bottom-left"
         points="3,48.1 0,53.1 0,82.8 3,87.8 6.1,82.8 6.1,53.1"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="v_bottom-left"
         points="3,48.1 0,53.1 0,82.8 3,87.8 6.1,82.8 6.1,53.1"
-        key={generateId()}
         fill="#141414"
       />
     ),
@@ -85,13 +81,11 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="h_top"
         points="4.8,3 9.8, 6.1 39.5, 6.1 44.5, 3 39.5,0 9.8,0"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="h_top"
         points="4.8,3 9.8,6.1 39.5,6.1 44.5,3 39.5,0 9.8,0"
-        key={generateId()}
         fill="#141414"
       />
     ),
@@ -99,13 +93,11 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="h_middle"
         points="4.8,46.2 9.8,49.3 39.5,49.3 44.5,46.2 39.5,43.2 9.8,43.2"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="h_middle"
         points="4.8,46.2 9.8,49.3 39.5,49.3 44.5,46.2 39.5,43.2 9.8,43.2"
-        key={generateId()}
         fill="#141414"
       />
     ),
@@ -113,13 +105,11 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="h_bottom"
         points="4.8,89.7 9.8,92.7 39.5,92.7 44.5,89.7 39.5,86.6 9.8,86.6"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="h_bottom"
         points="4.8,89.7 9.8,92.7 39.5,92.7 44.5,89.7 39.5,86.6 9.8,86.6"
-        key={generateId()}
         fill="#141414"
       />
     ),
@@ -127,13 +117,11 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="v_top-right"
         points="46.3,4.6 49.3,9.6 49.3,39.4 46.3,44.4 43.2,39.4 43.2,9.6"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="v_top-right"
         points="46.3,4.6 49.3,9.6 49.3,39.4 46.3,44.4 43.2,39.4 43.2,9.6 "
-        key={generateId()}
         fill="#141414"
       />
     ),
@@ -141,23 +129,21 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
       <polygon
         id="v_bottom-right"
         points="46.3,48.1 49.3,53.1 49.3,82.8 46.3,87.8 43.2,82.8 43.2,53.1"
-        key={generateId()}
       />
     ) : (
       <polygon
         id="v_bottom-right"
         points="46.3,48.1 49.3,53.1 49.3,82.8 46.3,87.8 43.2,82.8 43.2,53.1"
-        key={generateId()}
         fill="#141414"
       />
     ),
   ];
   return (
-    <Container>
+    <div className="digit">
       <svg viewBox="0 0 49.3 92.7" preserveAspectRatio="xMidYMid meet">
-        {segments}
+        {...segments}
       </svg>
-    </Container>
+    </div>
   );
 };
 

@@ -32,8 +32,14 @@ body {
 
   /* TODO: remove late */
   background-color: #c0c0c0;
-  box-shadow: 3px 3px 1px 0px rgba(128, 128, 128, 1);
-  padding: 5px;
+  /* padding: 5px; */
+
+  margin: 0 auto;
+  margin-top: 9px;
+  border-top: 3px solid #808080;
+  border-left: 3px solid #808080;
+  border-bottom: 3px solid #fff;
+  border-right: 3px solid #fff;
 }
 
 /* Move font to body   */
@@ -121,6 +127,43 @@ body {
 
 .face--oh {
   background-image: url('./images/face-oh.png');
+}
+
+.digit {
+  width: 19px;
+  height: 31px;
+  &:not(:last-child) {
+    margin-right: 3px;
+  }
+  svg {
+    display: block;
+    fill: red;
+  }
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  min-width: 220px;
+  height: 55px;
+  border-top: 3px solid #808080;
+  border-left: 3px solid #808080;
+  border-bottom: 3px solid #fff;
+  border-right: 3px solid #fff;
+  padding: 12px;
+}
+
+.numbers-field {
+  background-color: #000;
+  height: 35px;
+  width: 60px;
+  display: inline-block;
+  white-space: nowrap;
+  padding: 2px;
+  display: flex;
+  align-items: center;
 }
 
 .red {

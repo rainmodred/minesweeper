@@ -5,6 +5,7 @@ import Game from './components/Game';
 import Grid from './game/Grid';
 
 import face1 from './images/face-idle.png';
+import Digit from './components/Digit';
 console.log(face1);
 
 interface Cell {
@@ -120,6 +121,32 @@ function mineCell(gameboard: IGameboard) {
   }
 }
 
+function convert(num: number): string[] {
+  if (num > 999) return ['9', '9', '9'];
+  if (num < -99) return ['-', '9', '9'];
+
+  const digits = num.toString().split('');
+  while (digits.length < 3) {
+    digits.unshift('0');
+  }
+  return digits;
+}
+
+interface NumbersFieldProps {
+  num: number;
+}
+
+function NumbersField({ num }: NumbersFieldProps) {
+  const digits = convert(num);
+  return (
+    <div className="numbers-field">
+      {digits.map((d, i) => {
+        return <Digit digit={d} key={i} />;
+      })}
+    </div>
+  );
+}
+
 interface GameboardProps {
   gameBoard: IGameboard;
   lostMine: string | null;
@@ -213,10 +240,10 @@ function ScoreBoard({
   );
 
   return (
-    <div>
-      <p>flags:{flagsCount}</p>
+    <div className="scoreboard">
+      <NumbersField num={flagsCount} />
       <button onClick={onNewGame} className={`face face--${face}`}></button>
-      <p>time: {seconds} </p>
+      <NumbersField num={seconds} />
     </div>
   );
 }
