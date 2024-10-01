@@ -87,6 +87,42 @@ body {
   /* color: ${(props) => props.color}; */
 }
 
+.face {
+  background: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-top: 4px solid #fff;
+  border-left: 4px solid #fff;
+  border-bottom: 5px solid #808080;
+  border-right: 5px solid #808080;
+  background-size: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  &:active {
+    border-top: 4px solid #808080;
+    border-left: 4px solid #808080;
+    border-bottom: 2px solid #808080;
+    border-right: 2px solid #808080;
+  }
+}
+
+.face--lost {
+  background-image: url('./images/face-lost.png');
+}
+
+.face--won {
+  background-image: url('./images/face-won.png');
+}
+
+.face--idle {
+  background-image: url('./images/face-idle.png');
+}
+
+.face--oh {
+  background-image: url('./images/face-oh.png');
+}
+
 .red {
   background-color: #e40016;
 }

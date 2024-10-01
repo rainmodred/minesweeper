@@ -4,6 +4,9 @@ import useInterval from './hooks/useInterval';
 import Game from './components/Game';
 import Grid from './game/Grid';
 
+import face1 from './images/face-idle.png';
+console.log(face1);
+
 interface Cell {
   state: 'opened' | 'closed';
   value: 'mine' | number;
@@ -118,13 +121,20 @@ function mineCell(gameboard: IGameboard) {
 }
 
 interface GameboardProps {
-  gameboard: IGameboard;
+  gameBoard: IGameboard;
+  lostMine: string | null;
   onDig: (key: string) => void;
   onFlag: (key: string) => void;
-  lostMine: string | null;
+  onDigTry: () => void;
 }
 
-function Gameboard({ gameboard, onDig, onFlag, lostMine }: GameboardProps) {
+function Gameboard({
+  gameBoard,
+  lostMine,
+  onDig,
+  onFlag,
+  onDigTry,
+}: GameboardProps) {
   function flag(e: React.MouseEvent, key: string) {
     e.preventDefault();
     onFlag(key);
@@ -132,12 +142,13 @@ function Gameboard({ gameboard, onDig, onFlag, lostMine }: GameboardProps) {
 
   return (
     <div className="gameboard">
-      {[...gameboard].map(([key, cell]) => {
+      {[...gameBoard].map(([key, cell]) => {
         if (cell.state === 'closed') {
           return (
             <div
               onClick={() => onDig(key)}
               onContextMenu={(e) => flag(e, key)}
+              onMouseDown={onDigTry}
               className={`cell ${cell.hasFlag ? 'flag' : ''}`}
               key={key}
             ></div>
@@ -173,14 +184,21 @@ function Gameboard({ gameboard, onDig, onFlag, lostMine }: GameboardProps) {
 }
 
 type GameState = 'won' | 'lost' | 'started' | 'idle';
+type Face = 'won' | 'lost' | 'oh' | 'idle';
 
 interface ScoreBoardProps {
   flagsCount: number;
-  onNewGame: () => void;
   gameState: GameState;
+  face: Face;
+  onNewGame: () => void;
 }
 
-function ScoreBoard({ flagsCount, onNewGame, gameState }: ScoreBoardProps) {
+function ScoreBoard({
+  flagsCount,
+  gameState,
+  face,
+  onNewGame,
+}: ScoreBoardProps) {
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
@@ -197,7 +215,7 @@ function ScoreBoard({ flagsCount, onNewGame, gameState }: ScoreBoardProps) {
   return (
     <div>
       <p>flags:{flagsCount}</p>
-      <button onClick={onNewGame}>New Game</button>
+      <button onClick={onNewGame} className={`face face--${face}`}></button>
       <p>time: {seconds} </p>
     </div>
   );
@@ -209,6 +227,19 @@ export default function App() {
 
   const [flagsCount, setFlagsCount] = useState(9);
   const [lostMine, setLostMine] = useState<string | null>(null);
+  const [face, setFace] = useState<Face>('idle');
+
+  useEffect(() => {
+    function handleMouseUp() {
+      if (gameState === 'started' || gameState === 'idle') {
+        setFace('idle');
+      }
+    }
+
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => window.removeEventListener('mouseup', handleMouseUp);
+  }, [gameState]);
 
   function newGame() {
     setGameBoard(createGameboard(9, 9, 9));
@@ -277,20 +308,23 @@ export default function App() {
     );
     setFlagsCount(flagsCount - 1);
   }
+
   return (
     <div className="app">
-      {/* <Game grid={grid} /> */}
+      {/* <Game grid={new Grid(9, 9, 9)} /> */}
       <div className="game">
         <ScoreBoard
           onNewGame={newGame}
           gameState={gameState}
           flagsCount={flagsCount}
+          face={face}
         />
         <Gameboard
-          gameboard={gameBoard}
+          gameBoard={gameBoard}
+          lostMine={lostMine}
           onDig={dig}
           onFlag={flag}
-          lostMine={lostMine}
+          onDigTry={() => setFace('oh')}
         />
       </div>
     </div>

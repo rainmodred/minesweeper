@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import Smile from './Smile';
 import useInterval from '../hooks/useInterval';
 
-import face1 from '../images/face1.png';
-import face2 from '../images/face2.png';
-import face3 from '../images/face3.png';
-import face4 from '../images/face4.png';
+import face1 from '../images/face-idle.png';
+import face2 from '../images/face-oh.png';
+import face3 from '../images/face-lost.png';
+import face4 from '../images/face-won.png';
 import Digit from './Digit';
 import { Difficulty } from '../game/difficulties';
 import { GameState, Face } from '../types';
