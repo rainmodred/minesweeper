@@ -8,13 +8,6 @@ export interface Cell {
 
 export type IGameBoard = Map<string, Cell>;
 
-export function getMinesCount(grid: Set<string>, key: string): number {
-  const neighbors = getNeighbors(9, 9, key);
-  const count = neighbors.filter((k) => grid.has(k)).length;
-
-  return count;
-}
-
 export function createGameBoard(
   { width, height, minesCount }: Difficulty,
   getMineCells: (difficulty: Difficulty, skipKey?: string) => Set<string>,
@@ -24,13 +17,20 @@ export function createGameBoard(
   const state: 'opened' | 'closed' = 'closed';
   const mineCells = getMineCells({ width, height, minesCount }, skipKey);
 
-  for (let i = 0; i < width; i++) {
-    for (let j = 0; j < height; j++) {
+  function getMinesCount(key: string) {
+    const neighbors = getNeighbors(width, height, key);
+    const count = neighbors.filter((k) => mineCells.has(k)).length;
+    return count;
+  }
+
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
       const key = `${i}:${j}`;
+
       if (mineCells.has(key)) {
         grid.set(key, { state, value: 'mine', hasFlag: false });
       } else {
-        const count = getMinesCount(mineCells, key);
+        const count = getMinesCount(key);
         grid.set(key, { state, value: count, hasFlag: false });
       }
     }
@@ -55,7 +55,7 @@ export function getNeighbors(
     [row + 1, col],
     [row + 1, col + 1],
   ]
-    .filter(([r, c]) => r >= 0 && c >= 0 && r < width && c < height)
+    .filter(([r, c]) => r >= 0 && c >= 0 && r < height && c < width)
     .map(([r, c]) => `${r}:${c}`);
   return aroundCells;
 }
@@ -68,7 +68,12 @@ export function getNeighbors(
 //   return flaggedCells;
 // }
 
-export function revealArea(gameBoard: IGameBoard, key: string): IGameBoard {
+export function revealArea(
+  gameBoard: IGameBoard,
+  difficulty: Difficulty,
+  key: string
+): IGameBoard {
+  const { width, height } = difficulty;
   const cell = gameBoard.get(key)!;
   if (cell.state === 'opened') {
     return gameBoard;
@@ -81,9 +86,9 @@ export function revealArea(gameBoard: IGameBoard, key: string): IGameBoard {
 
   gameBoard.set(key, { ...cell, state: 'opened' });
 
-  const neighbors = getNeighbors(9, 9, key);
+  const neighbors = getNeighbors(width, height, key);
   for (const n of neighbors) {
-    revealArea(gameBoard, n);
+    revealArea(gameBoard, difficulty, n);
   }
   return gameBoard;
 }
@@ -94,7 +99,6 @@ export function getMineCells(
 ): Set<string> {
   const res = new Set<string>();
   while (res.size < minesCount) {
-    // console.log(res.size, minesCount);
     const row = Math.floor(Math.random() * height);
     const col = Math.floor(Math.random() * width);
     const key = `${row}:${col}`;

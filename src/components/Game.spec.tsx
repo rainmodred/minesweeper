@@ -103,4 +103,26 @@ describe('Game', () => {
     fireEvent.mouseUp(screen.getByTestId('0:0'));
     expect(smile).not.toHaveClass('face--oh');
   });
+
+  it('should work with all difficulties', () => {
+    //TODO:
+    const mockGetMineCells = () => new Set(['0:0', '1:1']);
+    render(
+      <Game
+        difficulty={{ ...difficulties['Expert'], minesCount: 2 }}
+        getMineCells={mockGetMineCells}
+      />
+    );
+
+    const smile = screen.getByTestId('smile');
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
+
+    fireEvent.contextMenu(screen.getByTestId('0:0'));
+    fireEvent.contextMenu(screen.getByTestId('1:1'));
+    fireEvent.click(screen.getByTestId('0:1'));
+    fireEvent.click(screen.getByTestId('1:0'));
+    fireEvent.click(screen.getByTestId('3:3'));
+
+    expect(smile).toHaveAttribute('data-gamestate', 'won');
+  });
 });

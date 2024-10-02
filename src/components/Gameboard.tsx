@@ -1,6 +1,8 @@
 import { IGameBoard } from '../utils/game';
 
 interface GameboardProps {
+  width: number;
+  height: number;
   gameBoard: IGameBoard;
   lostMine: string | null;
   onDig: (key: string) => void;
@@ -10,6 +12,8 @@ interface GameboardProps {
 }
 
 export function Gameboard({
+  width,
+  height,
   gameBoard,
   lostMine,
   onDig,
@@ -23,7 +27,14 @@ export function Gameboard({
   }
 
   return (
-    <div className="gameboard" data-testid="gameboard">
+    <div
+      className="gameboard"
+      data-testid="gameboard"
+      style={{
+        gridTemplateColumns: `repeat(${width}, 24px)`,
+        gridTemplateRows: `repeat(${height}, 24px)`,
+      }}
+    >
       {[...gameBoard].map(([key, cell]) => {
         if (cell.state === 'closed') {
           return (

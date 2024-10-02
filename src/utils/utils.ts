@@ -1,12 +1,12 @@
 import { IGameBoard } from './game';
 
 //DEBUG print
-export function printGameboard(gameBoard: IGameBoard) {
+export function printGameboard(gameBoard: IGameBoard, width: number) {
   let str = ``;
 
-  let row = 0;
+  let col = 0;
   for (const [, cell] of gameBoard) {
-    row++;
+    col++;
     if (cell.state === 'closed') {
       if (cell.hasFlag) {
         str += '🚩';
@@ -27,8 +27,8 @@ export function printGameboard(gameBoard: IGameBoard) {
       }
     }
 
-    if (row === 9) {
-      row = 0;
+    if (col === width) {
+      col = 0;
       str += '\n';
     }
   }

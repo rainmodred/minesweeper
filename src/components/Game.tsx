@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Difficulty as Setting } from '../utils/difficulties';
+import { Difficulty } from '../utils/difficulties';
 import {
   createGameBoard,
   getNeighbors,
@@ -13,8 +13,8 @@ import { printGameboard } from '../utils/utils';
 export type GameState = 'won' | 'lost' | 'started' | 'idle';
 
 interface GameProps {
-  difficulty: Setting;
-  getMineCells: (setting: Setting, skipKey?: string) => Set<string>;
+  difficulty: Difficulty;
+  getMineCells: (setting: Difficulty, skipKey?: string) => Set<string>;
 }
 
 export function Game({ difficulty, getMineCells }: GameProps) {
@@ -23,12 +23,16 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   );
   const [gameState, setGameState] = useState<GameState>('idle');
 
-  const [flagsCount, setFlagsCount] = useState(9);
+  const [flagsCount, setFlagsCount] = useState(difficulty.minesCount);
   const [lostMine, setLostMine] = useState<string | null>(null);
   const [isDigging, setIsDigging] = useState(false);
 
   // console.log([...gameBoard].filter(([, c]) => c.value === 'mine'));
-  console.log(printGameboard(gameBoard));
+  console.log(printGameboard(gameBoard, difficulty.width));
+
+  useEffect(() => {
+    newGame();
+  }, [difficulty]);
 
   useEffect(() => {
     if (isWon(gameBoard, difficulty)) {
@@ -104,7 +108,7 @@ export function Game({ difficulty, getMineCells }: GameProps) {
 
     setGameBoard((gameBoard) => {
       const temp = new Map(newBoard ? newBoard : gameBoard);
-      return revealArea(temp, key);
+      return revealArea(temp, difficulty, key);
     });
   }
 
@@ -145,6 +149,8 @@ export function Game({ difficulty, getMineCells }: GameProps) {
           isDigging={isDigging}
         />
         <Gameboard
+          width={difficulty.width}
+          height={difficulty.height}
           gameBoard={gameBoard}
           lostMine={lostMine}
           onDig={dig}
