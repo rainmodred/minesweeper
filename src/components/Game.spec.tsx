@@ -1,36 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { createGameboard, Game } from '../App';
+import { Game } from '../App';
 import { difficulties } from '../game/difficulties';
 
 describe('Game', () => {
-  beforeEach(() => {
-    vi.spyOn(Math, 'random')
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(0.2)
-      .mockReturnValueOnce(0.2)
-      .mockReturnValueOnce(0.3)
-      .mockReturnValueOnce(0.3)
-      .mockReturnValueOnce(0.4)
-      .mockReturnValueOnce(0.4)
-      .mockReturnValueOnce(0.5)
-      .mockReturnValueOnce(0.5)
-      .mockReturnValueOnce(0.6)
-      .mockReturnValueOnce(0.6)
-      .mockReturnValueOnce(0.7)
-      .mockReturnValueOnce(0.7)
-      .mockReturnValueOnce(0.8)
-      .mockReturnValueOnce(0.8)
-      .mockReturnValueOnce(0.9)
-      .mockReturnValueOnce(0.9);
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
-  });
-
   it('won', () => {
-    render(<Game difficulty={{ width: 9, height: 9, minesCount: 2 }} />);
+    const mockGetMineCells = () => new Set(['0:0', '1:1']);
+    render(
+      <Game
+        difficulty={{ width: 9, height: 9, minesCount: 2 }}
+        getMineCells={mockGetMineCells}
+      />
+    );
 
     const smile = screen.getByTestId('smile');
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
@@ -44,9 +24,10 @@ describe('Game', () => {
     expect(smile).toHaveAttribute('data-gamestate', 'won');
   });
 
-  it.skip('lost', () => {
-    const difficulty = difficulties['Beginner'];
-    render(<Game difficulty={difficulty} />);
+  it('lost', () => {
+    const difficulty = { ...difficulties['Beginner'], minesCount: 2 };
+    const mockGetMineCells = () => new Set(['0:0', '1:1']);
+    render(<Game difficulty={difficulty} getMineCells={mockGetMineCells} />);
 
     const gameboard = screen.getByTestId('gameboard');
 
@@ -59,6 +40,7 @@ describe('Game', () => {
     fireEvent.click(screen.getByTestId('0:0'));
     expect(smile).toHaveAttribute('data-gamestate', 'lost');
 
+    //reveal mines if game lost
     const expectedMines = gameboard.querySelectorAll(
       '.cell[data-mine="true"]'
     ).length;
@@ -68,7 +50,20 @@ describe('Game', () => {
     fireEvent.click(smile);
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
   });
-  it.todo('safe first click');
-  it.todo('timer');
-  it.todo('flags');
+
+  it('safe first click', () => {
+    const difficulty = { ...difficulties['Beginner'], minesCount: 2 };
+    const mockGetMineCells = vi
+      .fn()
+      .mockImplementationOnce(() => new Set(['0:0', '1:1']))
+      .mockImplementation(() => new Set(['5:2', '1:1']));
+
+    render(<Game difficulty={difficulty} getMineCells={mockGetMineCells} />);
+
+    const smile = screen.getByTestId('smile');
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
+
+    fireEvent.click(screen.getByTestId('0:0'));
+    expect(smile).toHaveAttribute('data-gamestate', 'started');
+  });
 });

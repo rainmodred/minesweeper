@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ImgHTMLAttributes, useEffect, useState } from 'react';
 import './App.css';
 import useInterval from './hooks/useInterval';
 
@@ -29,16 +29,18 @@ function getMineCells(
   return res;
 }
 
-type IGameboard = Map<string, Cell>;
+type IGameBoard = Map<string, Cell>;
 
 // Safe first click?
-function createGameboard(
+export function createGameBoard(
   { width, height, minesCount }: Difficulty,
+  getMineCells: (difficulty: Difficulty, skipKey?: string) => Set<string>,
   skipKey?: string
 ) {
-  const grid: IGameboard = new Map();
+  const grid: IGameBoard = new Map();
   const state: 'opened' | 'closed' = 'closed';
   const mineCells = getMineCells({ width, height, minesCount }, skipKey);
+  console.log('MINE CELLS', mineCells);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -73,7 +75,7 @@ function getNeighbors(key: string, width: number, height: number): string[] {
   return aroundCells;
 }
 
-function getMinesCount(grid: Set<string>, key: string) {
+function getMinesCount(grid: Set<string>, key: string): number {
   const neighbors = getNeighbors(key, 9, 9);
 
   let count = 0;
@@ -86,7 +88,7 @@ function getMinesCount(grid: Set<string>, key: string) {
   return count;
 }
 
-function revealArea(gameBoard: IGameboard, key: string): IGameboard {
+function revealArea(gameBoard: IGameBoard, key: string): IGameBoard {
   const cell = gameBoard.get(key)!;
   if (cell.state === 'opened') {
     return gameBoard;
@@ -107,7 +109,7 @@ function revealArea(gameBoard: IGameboard, key: string): IGameboard {
 }
 
 // TODO: remove
-function mineCell(gameboard: IGameboard) {
+function mineCell(gameboard: IGameBoard) {
   for (const [key, value] of gameboard) {
     if (value.value === 'mine') {
       console.log(key);
@@ -143,7 +145,7 @@ function NumbersField({ num }: NumbersFieldProps) {
 }
 
 interface GameboardProps {
-  gameBoard: IGameboard;
+  gameBoard: IGameBoard;
   lostMine: string | null;
   onDig: (key: string) => void;
   onFlag: (key: string) => void;
@@ -293,7 +295,7 @@ function ScoreBoard({
 }
 
 //TODO :DEBUG
-function printGameboard(gameBoard: IGameboard) {
+function printGameboard(gameBoard: IGameBoard) {
   let str = ``;
 
   let row = 0;
@@ -324,24 +326,28 @@ function printGameboard(gameBoard: IGameboard) {
       str += '\n';
     }
   }
-  console.log(str);
+  return str;
 }
 
 interface GameProps {
   difficulty: Difficulty;
+  getMineCells: (difficulty: Difficulty, skipKey?: string) => Set<string>;
 }
 
-export function Game({ difficulty }: GameProps) {
-  const [gameBoard, setGameBoard] = useState(createGameboard(difficulty));
+export function Game({ difficulty, getMineCells }: GameProps) {
+  const [gameBoard, setGameBoard] = useState(
+    createGameBoard(difficulty, getMineCells)
+  );
   const [gameState, setGameState] = useState<GameState>('idle');
 
   const [flagsCount, setFlagsCount] = useState(9);
   const [lostMine, setLostMine] = useState<string | null>(null);
   const [isDigging, setIsDigging] = useState(false);
 
-  console.log([...gameBoard].filter(([, c]) => c.value === 'mine'));
+  // console.log([...gameBoard].filter(([, c]) => c.value === 'mine'));
   console.log(printGameboard(gameBoard));
 
+  //extract?
   useEffect(() => {
     const count = [...gameBoard].filter(([, c]) => c.state === 'closed').length;
     if (count === difficulty.minesCount) {
@@ -362,7 +368,7 @@ export function Game({ difficulty }: GameProps) {
   }, [gameState]);
 
   function newGame() {
-    setGameBoard(createGameboard(difficulty));
+    setGameBoard(createGameBoard(difficulty, getMineCells));
     setGameState('idle');
     setFlagsCount(9);
   }
@@ -400,7 +406,7 @@ export function Game({ difficulty }: GameProps) {
     if (gameState === 'idle') {
       setGameState('started');
       if (cell.value === 'mine') {
-        newBoard = createGameboard(difficulty, key);
+        newBoard = createGameBoard(difficulty, getMineCells, key);
         cell = newBoard.get(key)!;
         setGameBoard(newBoard);
       }
@@ -476,10 +482,15 @@ export function Game({ difficulty }: GameProps) {
   );
 }
 
+// function initGameBoard(skipKey: string) {
+//   createGameboard()
+
+// }
+
 export default function App() {
   return (
     <>
-      <Game difficulty={{ ...difficulties['Beginner'], minesCount: 2 }} />
+      <Game difficulty={difficulties['Beginner']} getMineCells={getMineCells} />
     </>
   );
 }
