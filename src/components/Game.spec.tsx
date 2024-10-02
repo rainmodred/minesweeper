@@ -89,4 +89,18 @@ describe('Game', () => {
 
     //TODO: reset time and flags
   });
+
+  it('change face icon on mouse down', () => {
+    const difficulty = difficulties['Beginner'];
+
+    render(<Game difficulty={difficulty} getMineCells={getMineCells} />);
+
+    const smile = screen.getByTestId('smile');
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
+    fireEvent.mouseDown(screen.getByTestId('0:0'));
+    expect(smile).toHaveClass('face--oh');
+
+    fireEvent.mouseUp(screen.getByTestId('0:0'));
+    expect(smile).not.toHaveClass('face--oh');
+  });
 });
