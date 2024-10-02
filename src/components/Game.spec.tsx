@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { difficulties } from '../utils/difficulties';
+import { difficulties, Options } from '../utils/difficulties';
 import { Game } from './Game';
 import { getMineCells } from '../utils/game';
 
@@ -104,15 +104,26 @@ describe('Game', () => {
     expect(smile).not.toHaveClass('face--oh');
   });
 
-  it('should work with all difficulties', () => {
-    //TODO:
+  it.each([
+    ['Beginner', 'won'],
+    ['Intermediate', 'won'],
+    ['Expert', 'won'],
+  ])('should work with %s difficulty', (difficultyName, gameState) => {
     const mockGetMineCells = () => new Set(['0:0', '1:1']);
+    const difficulty = difficulties[difficultyName as Options];
     render(
       <Game
-        difficulty={{ ...difficulties['Expert'], minesCount: 2 }}
+        difficulty={{ ...difficulty, minesCount: 2 }}
         getMineCells={mockGetMineCells}
       />
     );
+
+    const gameboard = screen.getByTestId('gameboard');
+    const closedCells = gameboard.querySelectorAll(
+      '.cell[data-closed="true"]'
+    ).length;
+
+    expect(closedCells).toBe(difficulty.width * difficulty.height);
 
     const smile = screen.getByTestId('smile');
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
@@ -123,6 +134,6 @@ describe('Game', () => {
     fireEvent.click(screen.getByTestId('1:0'));
     fireEvent.click(screen.getByTestId('3:3'));
 
-    expect(smile).toHaveAttribute('data-gamestate', 'won');
+    expect(smile).toHaveAttribute('data-gamestate', gameState);
   });
 });
