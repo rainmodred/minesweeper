@@ -6,7 +6,7 @@ import {
   isWon,
   revealArea,
 } from '../utils/game';
-import { Gameboard } from './GameBoard';
+import { Gameboard } from './Gameboard';
 import { ScoreBoard } from './ScoreBoard';
 import { printGameboard } from '../utils/utils';
 

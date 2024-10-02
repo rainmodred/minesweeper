@@ -1,3 +1,5 @@
+import { IGameBoard } from '../utils/game';
+
 interface GameboardProps {
   gameBoard: IGameBoard;
   lostMine: string | null;
@@ -90,6 +92,4 @@ export function Gameboard({
       })}
     </div>
   );
-
-  // return <>{[...grid].map()}</>;
 }
