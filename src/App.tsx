@@ -5,7 +5,6 @@ import useInterval from './hooks/useInterval';
 import face1 from './images/face-idle.png';
 import Digit from './components/Digit';
 import { difficulties, Difficulty } from './game/difficulties';
-console.log(face1);
 
 interface Cell {
   state: 'opened' | 'closed';
@@ -14,13 +13,12 @@ interface Cell {
 }
 
 function getMineCells(
-  width: number,
-  height: number,
-  mineCount: number,
+  { width, height, minesCount }: Difficulty,
   skipKey?: string
 ): Set<string> {
   const res = new Set<string>();
-  while (res.size < mineCount) {
+  while (res.size < minesCount) {
+    // console.log(res.size, minesCount);
     const row = Math.floor(Math.random() * height);
     const col = Math.floor(Math.random() * width);
     const key = `${row}:${col}`;
@@ -40,7 +38,7 @@ function createGameboard(
 ) {
   const grid: IGameboard = new Map();
   const state: 'opened' | 'closed' = 'closed';
-  const mineCells = getMineCells(width, height, minesCount, skipKey);
+  const mineCells = getMineCells({ width, height, minesCount }, skipKey);
 
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
@@ -173,6 +171,7 @@ function Gameboard({
           return (
             <div
               data-testid={key}
+              data-closed={true}
               onClick={() => onDig(key)}
               onContextMenu={(e) => flag(e, key)}
               onMouseDown={onDigTry}
@@ -188,6 +187,7 @@ function Gameboard({
             if (lostMine === key) {
               return (
                 <div
+                  data-closed={false}
                   data-testid={key}
                   data-mine={true}
                   className="cell opened mine red"
@@ -197,6 +197,8 @@ function Gameboard({
             }
             return (
               <div
+                data-mine={true}
+                data-closed={false}
                 data-testid={key}
                 className="cell opened mine"
                 key={key}
@@ -206,12 +208,18 @@ function Gameboard({
 
           if (cell.value === 0) {
             return (
-              <div data-testid={key} className="cell opened" key={key}></div>
+              <div
+                data-closed={false}
+                data-testid={key}
+                className="cell opened"
+                key={key}
+              ></div>
             );
           }
 
           return (
             <div
+              data-closed={false}
               data-testid={key}
               onClick={() => onChord(key)}
               className={`cell opened number-${cell.value}`}
@@ -231,19 +239,18 @@ function Gameboard({
 }
 
 type GameState = 'won' | 'lost' | 'started' | 'idle';
-type Face = 'won' | 'lost' | 'oh' | 'idle';
 
 interface ScoreBoardProps {
   flagsCount: number;
   gameState: GameState;
-  face: Face;
+  isDigging: boolean;
   onNewGame: () => void;
 }
 
 function ScoreBoard({
   flagsCount,
   gameState,
-  face,
+  isDigging,
   onNewGame,
 }: ScoreBoardProps) {
   const [seconds, setSeconds] = useState(0);
@@ -259,13 +266,65 @@ function ScoreBoard({
     gameState === 'started' ? 1000 : null
   );
 
+  function getFace() {
+    if (gameState === 'started' || gameState === 'idle') {
+      if (isDigging) {
+        return 'oh';
+      }
+      return 'idle';
+    }
+    if (gameState === 'won' || gameState === 'lost') {
+      return gameState;
+    }
+  }
+
   return (
     <div className="scoreboard">
       <NumbersField num={flagsCount} />
-      <button onClick={onNewGame} className={`face face--${face}`}></button>
+      <button
+        data-testid="smile"
+        data-gamestate={gameState}
+        onClick={onNewGame}
+        className={`face face--${getFace()}`}
+      ></button>
       <NumbersField num={seconds} />
     </div>
   );
+}
+
+//TODO :DEBUG
+function printGameboard(gameBoard: IGameboard) {
+  let str = ``;
+
+  let row = 0;
+  for (const [, cell] of gameBoard) {
+    row++;
+    if (cell.state === 'closed') {
+      if (cell.hasFlag) {
+        str += '🚩';
+      } else {
+        str += '❓';
+      }
+    } else {
+      switch (cell.value) {
+        case 'mine':
+          str += '💣';
+          break;
+        case 0:
+          str += '👌';
+          break;
+        default:
+          str += `${cell.value} `;
+          break;
+      }
+    }
+
+    if (row === 9) {
+      row = 0;
+      str += '\n';
+    }
+  }
+  console.log(str);
 }
 
 interface GameProps {
@@ -278,13 +337,14 @@ export function Game({ difficulty }: GameProps) {
 
   const [flagsCount, setFlagsCount] = useState(9);
   const [lostMine, setLostMine] = useState<string | null>(null);
-  const [face, setFace] = useState<Face>('idle');
+  const [isDigging, setIsDigging] = useState(false);
 
   console.log([...gameBoard].filter(([, c]) => c.value === 'mine'));
+  console.log(printGameboard(gameBoard));
 
   useEffect(() => {
     const count = [...gameBoard].filter(([, c]) => c.state === 'closed').length;
-    if (count === 9) {
+    if (count === difficulty.minesCount) {
       setGameState('won');
     }
   }, [gameBoard]);
@@ -292,7 +352,7 @@ export function Game({ difficulty }: GameProps) {
   useEffect(() => {
     function handleMouseUp() {
       if (gameState === 'started' || gameState === 'idle') {
-        setFace('idle');
+        setIsDigging(false);
       }
     }
 
@@ -307,7 +367,7 @@ export function Game({ difficulty }: GameProps) {
     setFlagsCount(9);
   }
 
-  function revelMines() {
+  function revealMines() {
     const temp = new Map(gameBoard);
     for (const [key, cell] of temp) {
       if (cell.value === 'mine' && !cell.hasFlag) {
@@ -331,7 +391,6 @@ export function Game({ difficulty }: GameProps) {
     }
 
     let cell = gameBoard.get(key)!;
-    console.log('cell', cell, key);
     if (cell.state === 'opened') {
       return;
     }
@@ -354,7 +413,7 @@ export function Game({ difficulty }: GameProps) {
     if (cell.value === 'mine') {
       setGameState('lost');
       setLostMine(key);
-      revelMines();
+      revealMines();
       return;
     }
 
@@ -376,7 +435,7 @@ export function Game({ difficulty }: GameProps) {
     if (!hasEnoughtFlags) {
       return;
     }
-    console.log({ hasEnoughtFlags, flaggedCells, neighbors });
+    // console.log({ hasEnoughtFlags, flaggedCells, neighbors });
 
     for (const n of neighbors) {
       dig(n);
@@ -402,14 +461,14 @@ export function Game({ difficulty }: GameProps) {
           onNewGame={newGame}
           gameState={gameState}
           flagsCount={flagsCount}
-          face={face}
+          isDigging={isDigging}
         />
         <Gameboard
           gameBoard={gameBoard}
           lostMine={lostMine}
           onDig={dig}
           onFlag={flag}
-          onDigTry={() => setFace('oh')}
+          onDigTry={() => setIsDigging(true)}
           onChord={chord}
         />
       </div>
@@ -420,7 +479,7 @@ export function Game({ difficulty }: GameProps) {
 export default function App() {
   return (
     <>
-      <Game difficulty={difficulties['Beginner']} />
+      <Game difficulty={{ ...difficulties['Beginner'], minesCount: 2 }} />
     </>
   );
 }

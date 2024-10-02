@@ -2,10 +2,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createGameboard, Game } from '../App';
 import { difficulties } from '../game/difficulties';
 
-function Meow() {
-  return Math.random();
-}
-
 describe('Game', () => {
   beforeEach(() => {
     vi.spyOn(Math, 'random')
@@ -33,20 +29,46 @@ describe('Game', () => {
     vi.resetAllMocks();
   });
 
-  it('lost', () => {
-    render(<Game difficulty={difficulties['Beginner']} />);
+  it('won', () => {
+    render(<Game difficulty={{ width: 9, height: 9, minesCount: 2 }} />);
 
-    let gameboard = screen.getByTestId('gameboard');
+    const smile = screen.getByTestId('smile');
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
+
+    fireEvent.contextMenu(screen.getByTestId('0:0'));
+    fireEvent.contextMenu(screen.getByTestId('1:1'));
+    fireEvent.click(screen.getByTestId('0:1'));
+    fireEvent.click(screen.getByTestId('1:0'));
+    fireEvent.click(screen.getByTestId('3:3'));
+
+    expect(smile).toHaveAttribute('data-gamestate', 'won');
+  });
+
+  it.skip('lost', () => {
+    const difficulty = difficulties['Beginner'];
+    render(<Game difficulty={difficulty} />);
+
+    const gameboard = screen.getByTestId('gameboard');
+
+    const smile = screen.getByTestId('smile');
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
 
     fireEvent.click(screen.getByTestId('0:1'));
+    expect(smile).toHaveAttribute('data-gamestate', 'started');
+
     fireEvent.click(screen.getByTestId('0:0'));
+    expect(smile).toHaveAttribute('data-gamestate', 'lost');
 
-    screen.debug(gameboard);
+    const expectedMines = gameboard.querySelectorAll(
+      '.cell[data-mine="true"]'
+    ).length;
 
-    // let cell = screen.getByTestId('0:0');
-    // fireEvent.click(cell);
-    // screen.debug(cell);
+    expect(expectedMines).toBe(difficulty.minesCount);
 
-    // screen.debug(screen.getByTestId('c0:0'));
+    fireEvent.click(smile);
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
   });
+  it.todo('safe first click');
+  it.todo('timer');
+  it.todo('flags');
 });

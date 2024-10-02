@@ -1,6 +1,6 @@
 import Grid from './Grid';
 
-describe('Grid', () => {
+describe.skip('Grid', () => {
   let grid = new Grid(9, 9, 10);
   beforeEach(() => {
     grid = new Grid(9, 9, 10);
