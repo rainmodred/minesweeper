@@ -1,95 +1,95 @@
-import React from 'react';
-import styled from 'styled-components';
-
-import Field from './Field';
-import Cell from '../game/Cell';
-
-import { Face } from '../types';
-
-interface ContainerProps {
-  height: number;
-  width: number;
-}
-
-const Container = styled.div<ContainerProps>`
-  display: grid;
-  grid-template: repeat(${(props) => props.height}, 24px) / repeat(
-      ${(props) => props.width},
-      24px
-    );
-  margin: 0 auto;
-  margin-top: 9px;
-  border-top: 3px solid #808080;
-  border-left: 3px solid #808080;
-  border-bottom: 3px solid #fff;
-  border-right: 3px solid #fff;
-`;
-
 interface GameboardProps {
-  height: number;
-  width: number;
-  gameboard: Cell[][] | null;
-  onLeftClick: (row: number, col: number) => void;
-  onRightClick: (row: number, col: number) => void;
-  onFaceChange: (face: Face) => void;
+  gameBoard: IGameBoard;
+  lostMine: string | null;
+  onDig: (key: string) => void;
+  onFlag: (key: string) => void;
+  onDigTry: () => void;
+  onChord: (key: string) => void;
 }
 
-const Gameboard: React.FC<GameboardProps> = ({
-  height,
-  width,
-  gameboard,
-  onLeftClick,
-  onRightClick,
-  onFaceChange,
-}) => {
-  function handleLeftClick(event: React.MouseEvent<HTMLElement>) {
-    const cell = event.target as HTMLElement;
-    const { row, col } = cell.dataset;
-    if (row && col) {
-      onLeftClick(+row, +col);
-    }
-  }
-
-  function handleRightClick(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault();
-    const cell = event.target as HTMLElement;
-    const { row, col } = cell.dataset;
-    if (row && col) {
-      onRightClick(+row, +col);
-    }
-  }
-
-  function renderGameboard() {
-    if (gameboard === null) {
-      return null;
-    }
-
-    return gameboard.map((row: Cell[]) =>
-      row.map((cell: Cell) => (
-        <Field
-          key={cell.id}
-          hasMine={cell.hasMine}
-          state={cell.state}
-          row={cell.row}
-          col={cell.col}
-          value={cell.value}
-        />
-      ))
-    );
+export function Gameboard({
+  gameBoard,
+  lostMine,
+  onDig,
+  onChord,
+  onFlag,
+  onDigTry,
+}: GameboardProps) {
+  function flag(e: React.MouseEvent, key: string) {
+    e.preventDefault();
+    onFlag(key);
   }
 
   return (
-    <Container
-      height={height}
-      width={width}
-      onClick={handleLeftClick}
-      onMouseDown={() => onFaceChange(Face.oh)}
-      onContextMenu={handleRightClick}
-      data-testid="gameboard"
-    >
-      {renderGameboard()}
-    </Container>
-  );
-};
+    <div className="gameboard" data-testid="gameboard">
+      {[...gameBoard].map(([key, cell]) => {
+        if (cell.state === 'closed') {
+          return (
+            <div
+              data-testid={key}
+              data-closed={true}
+              onClick={() => onDig(key)}
+              onContextMenu={(e) => flag(e, key)}
+              onMouseDown={onDigTry}
+              className={`cell ${cell.hasFlag ? 'flag' : ''}`}
+              key={key}
+            ></div>
+          );
+        }
 
-export default Gameboard;
+        if (cell.state === 'opened') {
+          if (cell.value === 'mine') {
+            //show clicked mine
+            if (lostMine === key) {
+              return (
+                <div
+                  data-closed={false}
+                  data-testid={key}
+                  data-mine={true}
+                  className="cell opened mine red"
+                  key={key}
+                ></div>
+              );
+            }
+            return (
+              <div
+                data-mine={true}
+                data-closed={false}
+                data-testid={key}
+                className="cell opened mine"
+                key={key}
+              ></div>
+            );
+          }
+
+          if (cell.value === 0) {
+            return (
+              <div
+                data-closed={false}
+                data-testid={key}
+                className="cell opened"
+                key={key}
+              ></div>
+            );
+          }
+
+          return (
+            <div
+              data-closed={false}
+              data-testid={key}
+              onClick={() => onChord(key)}
+              className={`cell opened number-${cell.value}`}
+              key={key}
+            >
+              {cell.value}
+            </div>
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+
+  // return <>{[...grid].map()}</>;
+}

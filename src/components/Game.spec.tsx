@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Game } from '../App';
-import { difficulties } from '../game/difficulties';
+import { difficulties } from '../utils/difficulties';
+import { Game } from './Game';
+import { getMineCells } from '../utils/game';
 
 describe('Game', () => {
   it('won', () => {
@@ -65,5 +66,27 @@ describe('Game', () => {
 
     fireEvent.click(screen.getByTestId('0:0'));
     expect(smile).toHaveAttribute('data-gamestate', 'started');
+  });
+  it('new game', () => {
+    const difficulty = difficulties['Beginner'];
+
+    render(<Game difficulty={difficulty} getMineCells={getMineCells} />);
+
+    const smile = screen.getByTestId('smile');
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
+
+    fireEvent.click(screen.getByTestId('0:0'));
+    expect(smile).toHaveAttribute('data-gamestate', 'started');
+
+    fireEvent.click(smile);
+    expect(smile).toHaveAttribute('data-gamestate', 'idle');
+
+    const gameboard = screen.getByTestId('gameboard');
+    const closedCells = gameboard.querySelectorAll(
+      '.cell[data-closed="true"]'
+    ).length;
+    expect(closedCells).toBe(difficulty.width * difficulty.height);
+
+    //TODO: reset time and flags
   });
 });

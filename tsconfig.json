@@ -16,5 +16,14 @@
     "jsx": "react-jsx",
     "types": ["vitest/globals"]
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "old/Field.tsx",
+    "src/Game.spec.tsx",
+    "old/Game.tsx",
+    "old/Gameboard.tsx",
+    "old/Menu.tsx",
+    "old/ScoreBoard.tsx",
+    "old/Smile.tsx"
+  ]
 }
