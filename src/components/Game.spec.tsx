@@ -56,6 +56,8 @@ describe('Game', () => {
     const difficulty = { ...difficulties['Beginner'], minesCount: 2 };
     const mockGetMineCells = vi
       .fn()
+      //strict mode double render
+      .mockImplementationOnce(() => new Set(['0:0', '1:1']))
       .mockImplementationOnce(() => new Set(['0:0', '1:1']))
       .mockImplementation(() => new Set(['5:2', '1:1']));
 
@@ -65,6 +67,7 @@ describe('Game', () => {
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
 
     fireEvent.click(screen.getByTestId('0:0'));
+    expect(screen.getByTestId('0:0')).not.toHaveAttribute('data-mine');
     expect(smile).toHaveAttribute('data-gamestate', 'started');
   });
   it('new game', () => {

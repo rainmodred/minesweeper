@@ -103,7 +103,7 @@ export function revealCell(gameState: GameState, key: string): GameState {
   }
 
   let state: State = 'started';
-  const nextBoard = revealArea(gameState.gameBoard, gameState.difficulty, key);
+  const nextBoard = revealArea(newBoard, gameState.difficulty, key);
   if (isWon(nextBoard, gameState.difficulty)) {
     state = 'won';
   }
