@@ -11,14 +11,15 @@ function convert(num: number): string[] {
   return digits;
 }
 
-interface NumbersFieldProps {
+interface DisplayProps {
+  name: string;
   num: number;
 }
 
-export function Display({ num }: NumbersFieldProps) {
+export function Display({ num, name }: DisplayProps) {
   const digits = convert(num);
   return (
-    <div className="numbers-field">
+    <div data-value={num} data-testid={name} className="display">
       {digits.map((d, i) => {
         return <Digit digit={d} key={i} />;
       })}

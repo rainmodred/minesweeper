@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import useInterval from '../hooks/useInterval';
-import { GameState } from './Game';
 import { Display } from './Display';
+import { State } from '../utils/game';
 
 interface ScoreBoardProps {
   flagsCount: number;
-  gameState: GameState;
+  gameState: State;
   isDigging: boolean;
   onNewGame: () => void;
 }
@@ -43,14 +43,14 @@ export function ScoreBoard({
 
   return (
     <div className="scoreboard">
-      <Display num={flagsCount} />
+      <Display name="flags-display" num={flagsCount} />
       <button
         data-testid="smile"
         data-gamestate={gameState}
         onClick={onNewGame}
         className={`face face--${getFace()}`}
       ></button>
-      <Display num={seconds} />
+      <Display name="time-display" num={seconds} />
     </div>
   );
 }

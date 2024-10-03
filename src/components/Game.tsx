@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Difficulty } from '../utils/difficulties';
 import {
+  chord,
   createGameBoard,
-  getNeighbors,
-  isWon,
-  revealArea,
+  GameState,
+  putFlag,
+  revealCell,
 } from '../utils/game';
-import { Gameboard } from './Gameboard';
+import { GameboardWrapper } from './Gameboard';
 import { ScoreBoard } from './ScoreBoard';
 import { printGameboard } from '../utils/utils';
+import { ClosedCell } from './CloseCell';
 
-export type GameState = 'won' | 'lost' | 'started' | 'idle';
+export type IGameState = 'won' | 'lost' | 'started' | 'idle';
 
 interface GameProps {
   difficulty: Difficulty;
@@ -18,16 +20,22 @@ interface GameProps {
 }
 
 export function Game({ difficulty, getMineCells }: GameProps) {
-  const [gameBoard, setGameBoard] = useState(
-    createGameBoard(difficulty, getMineCells)
-  );
-  const [gameState, setGameState] = useState<GameState>('idle');
-
-  const [flagsCount, setFlagsCount] = useState(difficulty.minesCount);
-  const [lostMine, setLostMine] = useState<string | null>(null);
   const [isDigging, setIsDigging] = useState(false);
 
-  // console.log([...gameBoard].filter(([, c]) => c.value === 'mine'));
+  const [gameState, setGameState] = useState<GameState>({
+    state: 'idle',
+    gameBoard: createGameBoard(difficulty, getMineCells),
+    lostMine: null,
+    difficulty,
+  });
+
+  const { gameBoard, lostMine, state } = gameState;
+  const flagsCount =
+    difficulty.minesCount - [...gameBoard].filter(([, c]) => c.hasFlag).length;
+
+  const isGameOver = state === 'won' || state === 'lost';
+
+  //DEBUG tests
   console.log(printGameboard(gameBoard, difficulty.width));
 
   useEffect(() => {
@@ -35,14 +43,8 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   }, [difficulty]);
 
   useEffect(() => {
-    if (isWon(gameBoard, difficulty)) {
-      setGameState('won');
-    }
-  }, [gameBoard]);
-
-  useEffect(() => {
     function handleMouseUp() {
-      if (gameState === 'started' || gameState === 'idle') {
+      if (state === 'started' || state === 'idle') {
         setIsDigging(false);
       }
     }
@@ -51,92 +53,42 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   }, [gameState]);
 
   function newGame() {
-    setGameBoard(createGameBoard(difficulty, getMineCells));
-    setGameState('idle');
-    setFlagsCount(difficulty.minesCount);
-  }
-
-  function revealMines() {
-    const temp = new Map(gameBoard);
-    for (const [key, cell] of temp) {
-      if (cell.value === 'mine' && !cell.hasFlag) {
-        temp.set(key, { ...cell, state: 'opened' });
-      }
-    }
-
-    setGameBoard(temp);
-  }
-
-  function isGameOver(): boolean {
-    if (gameState === 'won' || gameState === 'lost') {
-      return true;
-    }
-    return false;
-  }
-
-  function dig(key: string) {
-    if (isGameOver()) {
-      return;
-    }
-
-    let cell = gameBoard.get(key)!;
-    if (cell.state === 'opened') {
-      return;
-    }
-
-    //safe first click
-    let newBoard = null;
-    if (gameState === 'idle') {
-      setGameState('started');
-      if (cell.value === 'mine') {
-        newBoard = createGameBoard(difficulty, getMineCells, key);
-        cell = newBoard.get(key)!;
-        setGameBoard(newBoard);
-      }
-    }
-
-    if (cell.hasFlag) {
-      return;
-    }
-
-    if (cell.value === 'mine') {
-      setGameState('lost');
-      setLostMine(key);
-      revealMines();
-      return;
-    }
-
-    setGameBoard((gameBoard) => {
-      const temp = new Map(newBoard ? newBoard : gameBoard);
-      return revealArea(temp, difficulty, key);
+    setGameState({
+      gameBoard: createGameBoard(difficulty, getMineCells),
+      state: 'idle',
+      lostMine: null,
+      difficulty,
     });
   }
 
-  function chord(key: string) {
-    const cell = gameBoard.get(key)!;
-    const neighbors = getNeighbors(difficulty.width, difficulty.height, key);
-    const flaggedCells = neighbors
-      .map((k) => gameBoard.get(k))
-      .filter((c) => c?.hasFlag);
-    const hasEnoughtFlags = flaggedCells.length === cell.value;
-    if (!hasEnoughtFlags) {
+  const handleDig = useCallback(
+    (key: string) => {
+      if (isGameOver) {
+        return;
+      }
+
+      setGameState((prevState) => revealCell(prevState, key));
+    },
+    [isGameOver]
+  );
+
+  const handleChord = useCallback(
+    (key: string) => {
+      if (isGameOver) {
+        return;
+      }
+
+      setGameState((prevState) => chord(prevState, key));
+    },
+    [isGameOver]
+  );
+
+  function handleFlag(key: string) {
+    if (isGameOver) {
       return;
     }
 
-    for (const n of neighbors) {
-      dig(n);
-    }
-  }
-
-  function flag(key: string) {
-    if (isGameOver()) {
-      return;
-    }
-    const cell = gameBoard.get(key)!;
-    setGameBoard(
-      new Map(gameBoard).set(key, { ...cell, hasFlag: !cell.hasFlag })
-    );
-    setFlagsCount(flagsCount - 1);
+    setGameState((prevState) => putFlag(prevState, key));
   }
 
   return (
@@ -144,20 +96,77 @@ export function Game({ difficulty, getMineCells }: GameProps) {
       <div className="game">
         <ScoreBoard
           onNewGame={newGame}
-          gameState={gameState}
+          gameState={gameState.state}
           flagsCount={flagsCount}
           isDigging={isDigging}
         />
-        <Gameboard
-          width={difficulty.width}
-          height={difficulty.height}
-          gameBoard={gameBoard}
-          lostMine={lostMine}
-          onDig={dig}
-          onFlag={flag}
-          onDigTry={() => setIsDigging(true)}
-          onChord={chord}
-        />
+        <GameboardWrapper width={difficulty.width} height={difficulty.height}>
+          {[...gameBoard].map(([key, cell]) => {
+            if (cell.state === 'closed') {
+              return (
+                <ClosedCell
+                  key={key}
+                  cellKey={key}
+                  cell={cell}
+                  onDig={handleDig}
+                  onFlag={handleFlag}
+                  onDigTry={() => setIsDigging(true)}
+                />
+              );
+            }
+
+            if (cell.state === 'opened') {
+              if (cell.value === 'mine') {
+                //show clicked mine
+                if (lostMine === key) {
+                  return (
+                    <div
+                      data-closed={false}
+                      data-testid={key}
+                      data-mine={true}
+                      className="cell opened mine red"
+                      key={key}
+                    ></div>
+                  );
+                }
+                return (
+                  <div
+                    data-mine={true}
+                    data-closed={false}
+                    data-testid={key}
+                    className="cell opened mine"
+                    key={key}
+                  ></div>
+                );
+              }
+
+              if (cell.value === 0) {
+                return (
+                  <div
+                    data-closed={false}
+                    data-testid={key}
+                    className="cell opened"
+                    key={key}
+                  ></div>
+                );
+              }
+
+              return (
+                <div
+                  data-closed={false}
+                  data-testid={key}
+                  onClick={() => handleChord(key)}
+                  className={`cell opened number-${cell.value}`}
+                  key={key}
+                >
+                  {cell.value}
+                </div>
+              );
+            }
+
+            return null;
+          })}
+        </GameboardWrapper>
       </div>
     </div>
   );

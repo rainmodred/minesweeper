@@ -7,7 +7,7 @@ import { getMineCells } from './utils/game';
 
 export function App() {
   const [selectedDifficulty, setSelectedDifficulty] = useState(
-    difficulties['Intermediate']
+    difficulties['Beginner']
   );
   return (
     <>

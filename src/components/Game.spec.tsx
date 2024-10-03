@@ -4,7 +4,7 @@ import { Game } from './Game';
 import { getMineCells } from '../utils/game';
 
 describe('Game', () => {
-  it('won', () => {
+  it('won game', () => {
     const mockGetMineCells = () => new Set(['0:0', '1:1']);
     render(
       <Game
@@ -25,7 +25,7 @@ describe('Game', () => {
     expect(smile).toHaveAttribute('data-gamestate', 'won');
   });
 
-  it('lost', () => {
+  it('lost game', () => {
     const difficulty = { ...difficulties['Beginner'], minesCount: 2 };
     const mockGetMineCells = () => new Set(['0:0', '1:1']);
     render(<Game difficulty={difficulty} getMineCells={mockGetMineCells} />);
@@ -87,7 +87,11 @@ describe('Game', () => {
     ).length;
     expect(closedCells).toBe(difficulty.width * difficulty.height);
 
-    //TODO: reset time and flags
+    expect(screen.getByTestId('flags-display')).toHaveAttribute(
+      'data-value',
+      difficulty.minesCount.toString()
+    );
+    //TODO: reset time
   });
 
   it('change face icon on mouse down', () => {
@@ -128,12 +132,43 @@ describe('Game', () => {
     const smile = screen.getByTestId('smile');
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
 
-    fireEvent.contextMenu(screen.getByTestId('0:0'));
-    fireEvent.contextMenu(screen.getByTestId('1:1'));
     fireEvent.click(screen.getByTestId('0:1'));
     fireEvent.click(screen.getByTestId('1:0'));
     fireEvent.click(screen.getByTestId('3:3'));
 
     expect(smile).toHaveAttribute('data-gamestate', gameState);
+  });
+
+  it('put flag and update flag display', () => {
+    const difficulty = difficulties['Beginner'];
+    render(<Game difficulty={difficulty} getMineCells={getMineCells} />);
+
+    fireEvent.contextMenu(screen.getByTestId('0:0'));
+    expect(screen.getByTestId('0:0')).toHaveAttribute('data-flag', 'true');
+
+    const display = screen.getByTestId('flags-display');
+    expect(display).toHaveAttribute(
+      'data-value',
+      (difficulty.minesCount - 1).toString()
+    );
+  });
+
+  it('chording', () => {
+    const mockGetMineCells = () => new Set(['0:0', '1:1']);
+    const difficulty = difficulties['Beginner'];
+    render(
+      <Game
+        difficulty={{ ...difficulty, minesCount: 2 }}
+        getMineCells={mockGetMineCells}
+      />
+    );
+
+    fireEvent.click(screen.getByTestId('2:1'));
+    fireEvent.contextMenu(screen.getByTestId('1:1'));
+    fireEvent.click(screen.getByTestId('2:1'));
+
+    for (const n of ['2:0', '2:2']) {
+      expect(screen.getByTestId(n)).toHaveAttribute('data-closed', 'false');
+    }
   });
 });

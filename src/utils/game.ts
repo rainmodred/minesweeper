@@ -68,6 +68,62 @@ export function getNeighbors(
 //   return flaggedCells;
 // }
 
+export type State = 'idle' | 'started' | 'won' | 'lost';
+
+export interface GameState {
+  state: State;
+  gameBoard: IGameBoard;
+  lostMine: null | string;
+  difficulty: Difficulty;
+}
+
+export function revealCell(gameState: GameState, key: string): GameState {
+  let newBoard = new Map(gameState.gameBoard);
+  let cell = newBoard.get(key)!;
+  //cel can't be open?
+  if (cell.hasFlag) {
+    return gameState;
+  }
+
+  //safe first click
+  if (gameState.state === 'idle') {
+    if (cell.value === 'mine') {
+      newBoard = createGameBoard(gameState.difficulty, getMineCells, key);
+      cell = newBoard.get(key)!;
+    }
+  }
+
+  if (cell.value === 'mine') {
+    return {
+      ...gameState,
+      state: 'lost',
+      gameBoard: revealMines(newBoard),
+      lostMine: key,
+    };
+  }
+
+  let state: State = 'started';
+  const nextBoard = revealArea(gameState.gameBoard, gameState.difficulty, key);
+  if (isWon(nextBoard, gameState.difficulty)) {
+    state = 'won';
+  }
+  return {
+    ...gameState,
+    state,
+    gameBoard: nextBoard,
+  };
+}
+
+function revealMines(gameBoard: IGameBoard): IGameBoard {
+  for (const [key, cell] of gameBoard) {
+    if (cell.value === 'mine' && !cell.hasFlag) {
+      gameBoard.set(key, { ...cell, state: 'opened' });
+    }
+  }
+
+  return gameBoard;
+}
+
 export function revealArea(
   gameBoard: IGameBoard,
   difficulty: Difficulty,
@@ -93,6 +149,41 @@ export function revealArea(
   return gameBoard;
 }
 
+export function chord(gameState: GameState, key: string): GameState {
+  const cell = gameState.gameBoard.get(key)!;
+  const neighbors = getNeighbors(
+    gameState.difficulty.width,
+    gameState.difficulty.height,
+    key
+  );
+  const flaggedCells = neighbors
+    .map((k) => gameState.gameBoard.get(k))
+    .filter((c) => c?.hasFlag);
+  const hasEnoughtFlags = flaggedCells.length === cell.value;
+  if (!hasEnoughtFlags) {
+    return gameState;
+  }
+
+  let state = gameState;
+  for (const n of neighbors) {
+    state = revealCell(gameState, n);
+  }
+  return state;
+}
+
+export function putFlag(gameState: GameState, key: string): GameState {
+  const newBoard = new Map(gameState.gameBoard);
+
+  const cell = newBoard.get(key)!;
+  return {
+    ...gameState,
+    gameBoard: new Map(gameState.gameBoard).set(key, {
+      ...cell,
+      hasFlag: !cell.hasFlag,
+    }),
+  };
+}
+
 export function getMineCells(
   { width, height, minesCount }: Difficulty,
   skipKey?: string
@@ -110,9 +201,8 @@ export function getMineCells(
 }
 
 export function isWon(gameBoard: IGameBoard, difficulty: Difficulty): boolean {
-  const count = [...gameBoard].filter(([, c]) => c.state === 'closed').length;
-  if (count === difficulty.minesCount) {
-    return true;
-  }
-  return false;
+  return (
+    [...gameBoard].filter(([, c]) => c.state === 'closed').length ===
+    difficulty.minesCount
+  );
 }
