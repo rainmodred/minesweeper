@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import useInterval from '../hooks/useInterval';
 import { Display } from './Display';
 import { State } from '../utils/game';
+import { clsx } from 'clsx';
 
 interface ScoreBoardProps {
   flagsCount: number;
@@ -36,11 +37,11 @@ export function ScoreBoard({
       }
       return 'idle';
     }
-    if (gameState === 'won' || gameState === 'lost') {
-      return gameState;
-    }
+
+    return gameState;
   }
 
+  const faceStyle = `face--${getFace()}`;
   return (
     <div className="scoreboard">
       <Display name="flags-display" num={flagsCount} />
@@ -48,7 +49,7 @@ export function ScoreBoard({
         data-testid="smile"
         data-gamestate={gameState}
         onClick={onNewGame}
-        className={`face face--${getFace()}`}
+        className={clsx('face', faceStyle)}
       ></button>
       <Display name="time-display" num={seconds} />
     </div>

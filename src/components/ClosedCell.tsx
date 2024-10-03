@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Cell } from '../utils/game';
+import clsx from 'clsx';
 
 interface ClosedCellProps {
   cell: Cell;
@@ -28,7 +29,7 @@ export const ClosedCell = memo(function ClosedCell({
       onClick={() => onDig(cellKey)}
       onContextMenu={(e) => flag(e, cellKey)}
       onMouseDown={onDigTry}
-      className={`cell ${cell.hasFlag ? 'flag' : ''}`}
+      className={clsx('cell', cell.hasFlag && 'flag')}
       key={cellKey}
     ></div>
   );
