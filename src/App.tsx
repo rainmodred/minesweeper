@@ -26,3 +26,18 @@ export function App() {
     </>
   );
 }
+
+const mockGetMineCells = () => {
+  return new Set([
+    '0:0',
+    '4:2',
+    '3:3',
+    '4:3',
+    '3:4',
+    '4:4',
+    '3:5',
+    '4:5',
+    '5:5',
+    '7:1',
+  ]);
+};

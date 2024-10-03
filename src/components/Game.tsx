@@ -10,7 +10,8 @@ import {
 import { GameboardWrapper } from './Gameboard';
 import { ScoreBoard } from './ScoreBoard';
 import { printGameboard } from '../utils/utils';
-import { ClosedCell } from './CloseCell';
+import { ClosedCell } from './ClosedCell';
+import { OpenCell } from './OpenCell';
 
 export type IGameState = 'won' | 'lost' | 'started' | 'idle';
 
@@ -36,6 +37,7 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   const isGameOver = state === 'won' || state === 'lost';
 
   //DEBUG tests
+  console.log([...gameState.gameBoard].filter(([, c]) => c.hasMine));
   console.log(printGameboard(gameBoard, difficulty.width));
 
   useEffect(() => {
@@ -115,52 +117,14 @@ export function Game({ difficulty, getMineCells }: GameProps) {
               );
             }
 
-            if (cell.state === 'opened') {
-              if (cell.value === 'mine') {
-                //show clicked mine
-                if (lostMine === key) {
-                  return (
-                    <div
-                      data-closed={false}
-                      data-testid={key}
-                      data-mine={true}
-                      className="cell opened mine red"
-                      key={key}
-                    ></div>
-                  );
-                }
-                return (
-                  <div
-                    data-mine={true}
-                    data-closed={false}
-                    data-testid={key}
-                    className="cell opened mine"
-                    key={key}
-                  ></div>
-                );
-              }
-
-              if (cell.value === 0) {
-                return (
-                  <div
-                    data-closed={false}
-                    data-testid={key}
-                    className="cell opened"
-                    key={key}
-                  ></div>
-                );
-              }
-
+            if (cell.state === 'open') {
               return (
-                <div
-                  data-closed={false}
-                  data-testid={key}
-                  onClick={() => handleChord(key)}
-                  className={`cell opened number-${cell.value}`}
+                <OpenCell
                   key={key}
-                >
-                  {cell.value}
-                </div>
+                  cell={{ ...cell, id: key }}
+                  lostMine={lostMine === key}
+                  onChord={() => handleChord(key)}
+                />
               );
             }
 

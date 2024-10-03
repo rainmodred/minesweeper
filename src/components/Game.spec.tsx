@@ -67,7 +67,7 @@ describe('Game', () => {
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
 
     fireEvent.click(screen.getByTestId('0:0'));
-    expect(screen.getByTestId('0:0')).not.toHaveAttribute('data-mine');
+    expect(screen.getByTestId('0:0')).toHaveAttribute('data-mine', 'false');
     expect(smile).toHaveAttribute('data-gamestate', 'started');
   });
   it('new game', () => {

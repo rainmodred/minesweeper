@@ -1,9 +1,12 @@
 import { Difficulty } from './difficulties';
 
+type CellState = 'open' | 'closed';
+
 export interface Cell {
-  state: 'opened' | 'closed';
-  value: 'mine' | number;
+  state: CellState;
+  value: number;
   hasFlag: boolean;
+  hasMine: boolean;
 }
 
 export type IGameBoard = Map<string, Cell>;
@@ -28,10 +31,10 @@ export function createGameBoard(
       const key = `${i}:${j}`;
 
       if (mineCells.has(key)) {
-        grid.set(key, { state, value: 'mine', hasFlag: false });
+        grid.set(key, { state, value: -1, hasMine: true, hasFlag: false });
       } else {
         const count = getMinesCount(key);
-        grid.set(key, { state, value: count, hasFlag: false });
+        grid.set(key, { state, value: count, hasMine: false, hasFlag: false });
       }
     }
   }
@@ -87,13 +90,13 @@ export function revealCell(gameState: GameState, key: string): GameState {
 
   //safe first click
   if (gameState.state === 'idle') {
-    if (cell.value === 'mine') {
+    if (cell.hasMine) {
       newBoard = createGameBoard(gameState.difficulty, getMineCells, key);
       cell = newBoard.get(key)!;
     }
   }
 
-  if (cell.value === 'mine') {
+  if (cell.hasMine) {
     return {
       ...gameState,
       state: 'lost',
@@ -116,8 +119,8 @@ export function revealCell(gameState: GameState, key: string): GameState {
 
 function revealMines(gameBoard: IGameBoard): IGameBoard {
   for (const [key, cell] of gameBoard) {
-    if (cell.value === 'mine' && !cell.hasFlag) {
-      gameBoard.set(key, { ...cell, state: 'opened' });
+    if (cell.hasMine && !cell.hasFlag) {
+      gameBoard.set(key, { ...cell, state: 'open' });
     }
   }
 
@@ -131,16 +134,16 @@ export function revealArea(
 ): IGameBoard {
   const { width, height } = difficulty;
   const cell = gameBoard.get(key)!;
-  if (cell.state === 'opened') {
+  if (cell.state === 'open') {
     return gameBoard;
   }
 
-  if (cell.value === 'mine' || cell.value > 0) {
-    gameBoard.set(key, { ...cell, state: 'opened' });
+  if (cell.hasMine || cell.value > 0) {
+    gameBoard.set(key, { ...cell, state: 'open' });
     return gameBoard;
   }
 
-  gameBoard.set(key, { ...cell, state: 'opened' });
+  gameBoard.set(key, { ...cell, state: 'open' });
 
   const neighbors = getNeighbors(width, height, key);
   for (const n of neighbors) {
