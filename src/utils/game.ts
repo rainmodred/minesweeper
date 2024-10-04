@@ -105,6 +105,7 @@ export function revealCell(gameState: GameState, key: string): GameState {
     };
   }
 
+  //TODO: fixme
   let state: State = 'started';
   const nextBoard = revealArea(newBoard, gameState.difficulty, key);
   if (isWon(nextBoard, gameState.difficulty)) {
@@ -159,6 +160,7 @@ export function chord(gameState: GameState, key: string): GameState {
     gameState.difficulty.height,
     key
   );
+
   const flaggedCells = neighbors
     .map((k) => gameState.gameBoard.get(k))
     .filter((c) => c?.hasFlag);
@@ -169,7 +171,7 @@ export function chord(gameState: GameState, key: string): GameState {
 
   let state = gameState;
   for (const n of neighbors) {
-    state = revealCell(gameState, n);
+    state = revealCell(state, n);
   }
   return state;
 }

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { difficulties, Options } from '../utils/difficulties';
 import { Game } from './Game';
-import { getMineCells } from '../utils/game';
+import { getMineCells, getNeighbors } from '../utils/game';
 
 describe('Game', () => {
   it('won game', () => {
@@ -53,11 +53,13 @@ describe('Game', () => {
   });
 
   it('safe first click', () => {
-    const difficulty = { ...difficulties['Beginner'], minesCount: 2 };
+    const difficulty = { ...difficulties['Beginner'], minesCount: 6 };
     const mockGetMineCells = vi
       .fn()
       //strict mode double render
-      .mockImplementationOnce(() => new Set(['0:0', '1:1']))
+      .mockImplementationOnce(
+        () => new Set(['0:0', '1:1', '7:7', '6:7', '5:5', '4:2'])
+      )
       .mockImplementationOnce(() => new Set(['0:0', '1:1']))
       .mockImplementation(() => new Set(['5:2', '1:1']));
 
@@ -157,21 +159,24 @@ describe('Game', () => {
   });
 
   it('chording', () => {
-    const mockGetMineCells = () => new Set(['0:0', '1:1']);
+    const mockGetMineCells = () => new Set(['1:2', '7:7', '8:8']);
     const difficulty = difficulties['Beginner'];
     render(
       <Game
-        difficulty={{ ...difficulty, minesCount: 2 }}
+        difficulty={{ ...difficulty, minesCount: 3 }}
         getMineCells={mockGetMineCells}
       />
     );
 
-    fireEvent.click(screen.getByTestId('2:1'));
-    fireEvent.contextMenu(screen.getByTestId('1:1'));
-    fireEvent.click(screen.getByTestId('2:1'));
+    fireEvent.contextMenu(screen.getByTestId('1:2'));
+    fireEvent.click(screen.getByTestId('1:1'));
+    fireEvent.click(screen.getByTestId('1:1'));
 
-    for (const n of ['2:0', '2:2']) {
-      expect(screen.getByTestId(n)).toHaveAttribute('data-closed', 'false');
+    const neighbors = getNeighbors(difficulty.width, difficulty.height, '1:1');
+    for (const n of neighbors) {
+      if (n !== '1:2') {
+        expect(screen.getByTestId(n)).toHaveAttribute('data-closed', 'false');
+      }
     }
   });
 });
