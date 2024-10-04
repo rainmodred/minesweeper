@@ -1,7 +1,7 @@
-import { IGameBoard } from './game';
+import { GameBoard } from './game';
 
 //DEBUG print
-export function printGameboard(gameBoard: IGameBoard, width: number) {
+export function printGameboard(gameBoard: GameBoard, width: number) {
   let str = ``;
 
   let col = 0;

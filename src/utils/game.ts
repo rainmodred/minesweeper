@@ -9,14 +9,14 @@ export interface Cell {
   hasMine: boolean;
 }
 
-export type IGameBoard = Map<string, Cell>;
+export type GameBoard = Map<string, Cell>;
 
 export function createGameBoard(
   { width, height, minesCount }: Difficulty,
   getMineCells: (difficulty: Difficulty, skipKey?: string) => Set<string>,
   skipKey?: string
 ) {
-  const grid: IGameBoard = new Map();
+  const grid: GameBoard = new Map();
   const state: 'opened' | 'closed' = 'closed';
   const mineCells = getMineCells({ width, height, minesCount }, skipKey);
 
@@ -75,7 +75,7 @@ export type State = 'idle' | 'started' | 'won' | 'lost';
 
 export interface GameState {
   state: State;
-  gameBoard: IGameBoard;
+  gameBoard: GameBoard;
   lostMine: null | string;
   difficulty: Difficulty;
 }
@@ -118,7 +118,7 @@ export function revealCell(gameState: GameState, key: string): GameState {
   };
 }
 
-function revealMines(gameBoard: IGameBoard): IGameBoard {
+function revealMines(gameBoard: GameBoard): GameBoard {
   for (const [key, cell] of gameBoard) {
     if (cell.hasMine && !cell.hasFlag) {
       gameBoard.set(key, { ...cell, state: 'open' });
@@ -129,10 +129,10 @@ function revealMines(gameBoard: IGameBoard): IGameBoard {
 }
 
 export function revealArea(
-  gameBoard: IGameBoard,
+  gameBoard: GameBoard,
   difficulty: Difficulty,
   key: string
-): IGameBoard {
+): GameBoard {
   const { width, height } = difficulty;
   const cell = gameBoard.get(key)!;
   if (cell.state === 'open') {
@@ -205,7 +205,7 @@ export function getMineCells(
   return res;
 }
 
-export function isWon(gameBoard: IGameBoard, difficulty: Difficulty): boolean {
+export function isWon(gameBoard: GameBoard, difficulty: Difficulty): boolean {
   return (
     [...gameBoard].filter(([, c]) => c.state === 'closed').length ===
     difficulty.minesCount
