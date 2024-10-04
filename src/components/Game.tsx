@@ -12,6 +12,7 @@ import { ScoreBoard } from './ScoreBoard';
 import { printGameboard } from '../utils/utils';
 import { ClosedCell } from './ClosedCell';
 import { OpenCell } from './OpenCell';
+import { Face } from './Face';
 
 export type IGameState = 'won' | 'lost' | 'started' | 'idle';
 
@@ -96,12 +97,9 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   return (
     <div className="app">
       <div className="game">
-        <ScoreBoard
-          onNewGame={newGame}
-          gameState={gameState.state}
-          flagsCount={flagsCount}
-          isDigging={isDigging}
-        />
+        <ScoreBoard gameState={gameState.state} flagsCount={flagsCount}>
+          <Face state={state} isDigging={isDigging} onNewGame={newGame} />
+        </ScoreBoard>
         <GameboardWrapper width={difficulty.width} height={difficulty.height}>
           {[...gameBoard].map(([key, cell]) => {
             if (cell.state === 'closed') {

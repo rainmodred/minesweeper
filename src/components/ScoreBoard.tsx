@@ -1,22 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, PropsWithChildren } from 'react';
 import useInterval from '../hooks/useInterval';
 import { Display } from './Display';
 import { State } from '../utils/game';
-import { clsx } from 'clsx';
 
 interface ScoreBoardProps {
   flagsCount: number;
   gameState: State;
-  isDigging: boolean;
-  onNewGame: () => void;
 }
 
 export function ScoreBoard({
   flagsCount,
   gameState,
-  isDigging,
-  onNewGame,
-}: ScoreBoardProps) {
+  children,
+}: PropsWithChildren<ScoreBoardProps>) {
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
@@ -30,27 +26,10 @@ export function ScoreBoard({
     gameState === 'started' ? 1000 : null
   );
 
-  function getFace() {
-    if (gameState === 'started' || gameState === 'idle') {
-      if (isDigging) {
-        return 'oh';
-      }
-      return 'idle';
-    }
-
-    return gameState;
-  }
-
-  const faceStyle = `face--${getFace()}`;
   return (
     <div className="scoreboard">
       <Display name="flags-display" num={flagsCount} />
-      <button
-        data-testid="smile"
-        data-gamestate={gameState}
-        onClick={onNewGame}
-        className={clsx('face', faceStyle)}
-      ></button>
+      {children}
       <Display name="time-display" num={seconds} />
     </div>
   );
