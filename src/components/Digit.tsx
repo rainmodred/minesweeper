@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 // Seven segment digit https://codepen.io/joeyred/pen/gEpVbM
 // |--2--|
@@ -28,22 +27,6 @@ function numberToSSD(key: string) {
   };
   return segments[key];
 }
-
-function generateId() {
-  return `_${Math.random().toString(36).slice(2, 9)}`;
-}
-
-const Container = styled.div`
-  width: 19px;
-  height: 31px;
-  &:not(:last-child) {
-    margin-right: 3px;
-  }
-  svg {
-    display: block;
-    fill: red;
-  }
-`;
 
 interface DigitProps {
   digit: string;
