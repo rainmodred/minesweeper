@@ -45,6 +45,22 @@ export function Menu({ selectedDifficulty, onSelect }: MenuProps) {
           })}
         </DropdownContent>
       </Dropdown>
+
+      <Dropdown>
+        <DropdownButton>Help</DropdownButton>
+        <DropdownContent>
+          <DropdownItem checked={false} onSelect={() => {}}>
+            <a
+              href="https://github.com/rainmodred/minesweeper"
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              Github
+            </a>
+          </DropdownItem>
+        </DropdownContent>
+      </Dropdown>
     </div>
   );
 }
