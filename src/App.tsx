@@ -1,33 +1,41 @@
-import React from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { useState } from 'react';
+import './App.css';
+import { Game } from './features/Minesweeper/Game/Game';
 
-import Game from './components/Game';
+import { difficulties } from './features/Minesweeper/difficulties';
+import { getMineCells } from './features/Minesweeper/minesweeper';
+import { Menu } from '@/features/Minesweeper/Menu/Menu';
+import { DifficultyName } from './features/Minesweeper/types';
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+export function App() {
+  const [gameId, setGameId] = useState(0);
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<DifficultyName>('Beginner');
 
-const GlobalStyle = createGlobalStyle`
-  *, *::after, *::before {
-    padding: 0;
-    margin: 0;
-    box-sizing: inherit;
-    font-family: Arial, Helvetica, sans-serif;
+  function handleDifficultyChange(title: string) {
+    if (title === 'New') {
+      setGameId(gameId + 1);
+      return;
+    }
+
+    setSelectedDifficulty(title as DifficultyName);
   }
-  body {
-    box-sizing: border-box;
-    background-color: #262626;
-  }
-`;
 
-const App: React.FC = () => {
+  const difficulty = difficulties[selectedDifficulty];
   return (
-    <Container>
-      <GlobalStyle />
-      <Game />
-    </Container>
+    <div className="app">
+      <div>
+        <Menu
+          selectedDifficulty={selectedDifficulty}
+          onSelect={handleDifficultyChange}
+        />
+        <Game
+          difficulty={difficulty}
+          getMineCells={getMineCells}
+          key={gameId}
+        />
+      </div>
+    </div>
   );
-};
-
-export default App;
+}
+const mockGetMineCells = () => new Set(['1:2', '7:7', '8:8']);

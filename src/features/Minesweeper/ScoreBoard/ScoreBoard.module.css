@@ -1,0 +1,72 @@
+.face {
+  background: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-top: 4px solid #fff;
+  border-left: 4px solid #fff;
+  border-bottom: 5px solid #808080;
+  border-right: 5px solid #808080;
+  background-size: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  &:active {
+    border-top: 4px solid #808080;
+    border-left: 4px solid #808080;
+    border-bottom: 2px solid #808080;
+    border-right: 2px solid #808080;
+  }
+}
+
+.face--lost {
+  background-image: url('@/images/face-lost.png');
+}
+
+.face--won {
+  background-image: url('@/images/face-won.png');
+}
+
+.face--idle {
+  background-image: url('@/images/face-idle.png');
+}
+
+.face--oh {
+  background-image: url('@/images/face-oh.png');
+}
+
+.digit {
+  width: 19px;
+  height: 31px;
+  &:not(:last-child) {
+    margin-right: 3px;
+  }
+  svg {
+    display: block;
+    fill: red;
+  }
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  min-width: 220px;
+  height: 55px;
+  border-top: 3px solid #808080;
+  border-left: 3px solid #808080;
+  border-bottom: 3px solid #fff;
+  border-right: 3px solid #fff;
+  padding: 12px;
+}
+
+.display {
+  background-color: #000;
+  height: 35px;
+  width: 60px;
+  display: inline-block;
+  white-space: nowrap;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
