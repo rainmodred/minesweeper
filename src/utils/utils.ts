@@ -1,4 +1,4 @@
-import { GameBoard } from './game';
+import { GameBoard } from './minesweeper';
 
 //DEBUG print
 export function printGameboard(gameBoard: GameBoard, width: number) {

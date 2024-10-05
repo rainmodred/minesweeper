@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { difficulties, Options } from '../utils/difficulties';
 import { Game } from './Game';
-import { getMineCells, getNeighbors } from '../utils/game';
+import { getMineCells, getNeighbors } from '../utils/minesweeper';
 
 describe('Game', () => {
   it('won game', () => {

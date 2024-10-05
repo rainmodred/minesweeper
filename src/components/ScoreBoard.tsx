@@ -1,7 +1,7 @@
 import { useState, useEffect, PropsWithChildren } from 'react';
 import useInterval from '../hooks/useInterval';
 import { Display } from './Display';
-import { State } from '../utils/game';
+import { State } from '../utils/minesweeper';
 
 interface ScoreBoardProps {
   flagsCount: number;

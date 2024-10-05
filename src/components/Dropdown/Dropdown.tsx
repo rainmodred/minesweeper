@@ -4,6 +4,8 @@ import {
   PropsWithChildren,
   SetStateAction,
   useContext,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 import styles from './Dropdown.module.css';
@@ -47,13 +49,29 @@ export function DropdownButton({ children }: Props) {
 }
 
 export function DropdownContent({ children }: Props) {
-  const { open } = useContext(DropdownContext);
+  const { open, setOpen } = useContext(DropdownContext);
+  const ref = useRef<HTMLDivElement>(null);
+  function handleClickOutside(event: MouseEvent) {
+    if (ref.current && !ref.current.contains(event.target as Node)) {
+      setOpen(false);
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div
+      ref={ref}
       className={clsx(
         styles['dropdown-content'],
         open && styles['dropdown-content--open']
       )}
+      onBlur={() => setOpen(false)}
     >
       {children}
     </div>

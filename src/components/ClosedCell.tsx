@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Cell } from '../utils/game';
+import { Cell } from '../utils/minesweeper';
 import clsx from 'clsx';
 
 interface ClosedCellProps {

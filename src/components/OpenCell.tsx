@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Cell } from '../utils/game';
+import { Cell } from '../utils/minesweeper';
 import clsx from 'clsx';
 
 interface Props {

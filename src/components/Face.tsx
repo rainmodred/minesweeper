@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { State } from '../utils/game';
+import { State } from '../utils/minesweeper';
 
 interface FaceProps {
   state: State;

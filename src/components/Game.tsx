@@ -6,7 +6,7 @@ import {
   GameState,
   putFlag,
   revealCell,
-} from '../utils/game';
+} from '../utils/minesweeper';
 import { GameboardWrapper } from './Gameboard';
 import { ScoreBoard } from './ScoreBoard';
 import { printGameboard } from '../utils/utils';
@@ -38,8 +38,8 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   const isGameOver = state === 'won' || state === 'lost';
 
   //DEBUG tests
-  console.log([...gameState.gameBoard].filter(([, c]) => c.hasMine));
-  console.log(printGameboard(gameBoard, difficulty.width));
+  // console.log([...gameState.gameBoard].filter(([, c]) => c.hasMine));
+  // console.log(printGameboard(gameBoard, difficulty.width));
 
   useEffect(() => {
     newGame();
