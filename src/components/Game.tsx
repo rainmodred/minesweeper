@@ -95,41 +95,39 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   }
 
   return (
-    <div className="app">
-      <div className="game">
-        <ScoreBoard gameState={gameState.state} flagsCount={flagsCount}>
-          <Face state={state} isDigging={isDigging} onNewGame={newGame} />
-        </ScoreBoard>
-        <GameboardWrapper width={difficulty.width} height={difficulty.height}>
-          {[...gameBoard].map(([key, cell]) => {
-            if (cell.state === 'closed') {
-              return (
-                <ClosedCell
-                  key={key}
-                  cellKey={key}
-                  cell={cell}
-                  onDig={handleDig}
-                  onFlag={handleFlag}
-                  onDigTry={() => setIsDigging(true)}
-                />
-              );
-            }
+    <div className="game">
+      <ScoreBoard gameState={gameState.state} flagsCount={flagsCount}>
+        <Face state={state} isDigging={isDigging} onNewGame={newGame} />
+      </ScoreBoard>
+      <GameboardWrapper width={difficulty.width} height={difficulty.height}>
+        {[...gameBoard].map(([key, cell]) => {
+          if (cell.state === 'closed') {
+            return (
+              <ClosedCell
+                key={key}
+                cellKey={key}
+                cell={cell}
+                onDig={handleDig}
+                onFlag={handleFlag}
+                onDigTry={() => setIsDigging(true)}
+              />
+            );
+          }
 
-            if (cell.state === 'open') {
-              return (
-                <OpenCell
-                  key={key}
-                  cell={{ ...cell, id: key }}
-                  lostMine={lostMine === key}
-                  onChord={() => handleChord(key)}
-                />
-              );
-            }
+          if (cell.state === 'open') {
+            return (
+              <OpenCell
+                key={key}
+                cell={{ ...cell, id: key }}
+                lostMine={lostMine === key}
+                onChord={() => handleChord(key)}
+              />
+            );
+          }
 
-            return null;
-          })}
-        </GameboardWrapper>
-      </div>
+          return null;
+        })}
+      </GameboardWrapper>
     </div>
   );
 }

@@ -1,11 +1,7 @@
-export enum Options {
-  Beginner = 'Beginner',
-  Intermediate = 'Intermediate',
-  Expert = 'Expert',
-}
+export type DifficultyTitle = 'Beginner' | 'Intermediate' | 'Expert';
 
 export type Difficulties = {
-  [key in Options]: Difficulty;
+  [key in DifficultyTitle]: Difficulty;
 };
 
 export type Difficulty = {
