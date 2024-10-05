@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './ScoreBoard.module.css';
 
 // Seven segment digit https://codepen.io/joeyred/pen/gEpVbM
 // |--2--|
@@ -122,7 +123,7 @@ const Digit: React.FC<DigitProps> = ({ digit }) => {
     ),
   ];
   return (
-    <div className="digit">
+    <div className={styles.digit}>
       <svg viewBox="0 0 49.3 92.7" preserveAspectRatio="xMidYMid meet">
         {...segments}
       </svg>

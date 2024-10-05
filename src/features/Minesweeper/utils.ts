@@ -1,4 +1,4 @@
-import { GameBoard } from './minesweeper';
+import { GameBoard } from '@/features/Minesweeper/types';
 
 //DEBUG print
 export function printGameboard(gameBoard: GameBoard, width: number) {
@@ -14,16 +14,17 @@ export function printGameboard(gameBoard: GameBoard, width: number) {
         str += '❓';
       }
     } else {
-      switch (cell.value) {
-        case 'mine':
-          str += '💣';
-          break;
-        case 0:
-          str += '👌';
-          break;
-        default:
-          str += `${cell.value} `;
-          break;
+      if (cell.hasMine) {
+        str += '💣';
+      } else {
+        switch (cell.value) {
+          case 0:
+            str += '👌';
+            break;
+          default:
+            str += `${cell.value} `;
+            break;
+        }
       }
     }
 

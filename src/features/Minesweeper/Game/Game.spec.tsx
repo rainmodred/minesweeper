@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { difficulties, Options } from '../utils/difficulties';
-import { Game } from './Game';
-import { getMineCells, getNeighbors } from '../utils/minesweeper';
+import { difficulties } from '@/features/Minesweeper/difficulties';
+import { Game } from '@/features/Minesweeper/Game/Game';
+import { getMineCells, getNeighbors } from '@/features/Minesweeper/minesweeper';
+import { DifficultyName } from '../types';
 
 describe('Game', () => {
   it('won game', () => {
@@ -43,10 +44,11 @@ describe('Game', () => {
 
     //reveal mines if game lost
     const expectedMines = gameboard.querySelectorAll(
-      '.cell[data-mine="true"]'
-    ).length;
+      'div[data-closed="false"][data-mine="true"]'
+    );
+    console.log([...expectedMines]);
 
-    expect(expectedMines).toBe(difficulty.minesCount);
+    expect(expectedMines).toHaveLength(difficulty.minesCount);
 
     fireEvent.click(smile);
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
@@ -88,7 +90,7 @@ describe('Game', () => {
 
     const gameboard = screen.getByTestId('gameboard');
     const closedCells = gameboard.querySelectorAll(
-      '.cell[data-closed="true"]'
+      'div[data-closed="true"]'
     ).length;
     expect(closedCells).toBe(difficulty.width * difficulty.height);
 
@@ -96,7 +98,10 @@ describe('Game', () => {
       'data-value',
       difficulty.minesCount.toString()
     );
-    //TODO: reset time
+    expect(screen.getByTestId('time-display')).toHaveAttribute(
+      'data-value',
+      '0'
+    );
   });
 
   it('change face icon on mouse down', () => {
@@ -107,10 +112,10 @@ describe('Game', () => {
     const smile = screen.getByTestId('smile');
     expect(smile).toHaveAttribute('data-gamestate', 'idle');
     fireEvent.mouseDown(screen.getByTestId('0:0'));
-    expect(smile).toHaveClass('face--oh');
+    expect(smile).toHaveClass(/face--oh/);
 
     fireEvent.mouseUp(screen.getByTestId('0:0'));
-    expect(smile).not.toHaveClass('face--oh');
+    expect(smile).not.toHaveClass(/face--oh/);
   });
 
   it.each([
@@ -119,7 +124,7 @@ describe('Game', () => {
     ['Expert', 'won'],
   ])('should work with %s difficulty', (difficultyName, gameState) => {
     const mockGetMineCells = () => new Set(['0:0', '1:1']);
-    const difficulty = difficulties[difficultyName as Options];
+    const difficulty = difficulties[difficultyName as DifficultyName];
     render(
       <Game
         difficulty={{ ...difficulty, minesCount: 2 }}
@@ -129,7 +134,7 @@ describe('Game', () => {
 
     const gameboard = screen.getByTestId('gameboard');
     const closedCells = gameboard.querySelectorAll(
-      '.cell[data-closed="true"]'
+      'div[data-closed="true"]'
     ).length;
 
     expect(closedCells).toBe(difficulty.width * difficulty.height);

@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import './App.css';
-import { Game } from './components/Game';
+import { Game } from './features/Minesweeper/Game/Game';
 
-import { difficulties, DifficultyTitle } from './utils/difficulties';
-import { getMineCells } from './utils/minesweeper';
-import { Menu } from './components/Menu/Menu';
+import { difficulties } from './features/Minesweeper/difficulties';
+import { getMineCells } from './features/Minesweeper/minesweeper';
+import { Menu } from '@/features/Minesweeper/Menu/Menu';
+import { DifficultyName } from './features/Minesweeper/types';
 
 export function App() {
   const [gameId, setGameId] = useState(0);
   const [selectedDifficulty, setSelectedDifficulty] =
-    useState<DifficultyTitle>('Beginner');
+    useState<DifficultyName>('Beginner');
 
   function handleDifficultyChange(title: string) {
     if (title === 'New') {
@@ -17,13 +18,13 @@ export function App() {
       return;
     }
 
-    setSelectedDifficulty(title as DifficultyTitle);
+    setSelectedDifficulty(title as DifficultyName);
   }
 
   const difficulty = difficulties[selectedDifficulty];
   return (
     <div className="app">
-      <div className="game-wrapper">
+      <div>
         <Menu
           selectedDifficulty={selectedDifficulty}
           onSelect={handleDifficultyChange}

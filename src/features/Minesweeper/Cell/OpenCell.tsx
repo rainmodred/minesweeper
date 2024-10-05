@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react';
-import { Cell } from '../utils/minesweeper';
+import { Cell } from '@/features/Minesweeper/types';
 import clsx from 'clsx';
+import styles from './Cell.module.css';
 
 interface Props {
   cell: Cell & { id: string };
@@ -22,9 +23,11 @@ export function OpenCell({
   }
 
   const classes = clsx(
-    `cell opened number-${cell.value}`,
-    cell.hasMine && 'mine',
-    lostMine && 'red'
+    styles.cell,
+    styles['cell--open'],
+    styles[`number-${cell.value}`],
+    cell.hasMine && styles['cell--mine'],
+    lostMine && styles['cell--lostMine']
   );
 
   return (

@@ -4,7 +4,8 @@ import {
   DropdownContent,
   DropdownSeparator,
   DropdownItem,
-} from '../Dropdown/Dropdown';
+} from '@/components/Dropdown/Dropdown';
+import styles from './Menu.module.css';
 
 const menuConfig = [
   { title: 'New', hotkey: 'F2' },
@@ -21,7 +22,7 @@ interface MenuProps {
 
 export function Menu({ selectedDifficulty, onSelect }: MenuProps) {
   return (
-    <div className="menu">
+    <div className={styles.menu}>
       <Dropdown>
         <DropdownButton>Game</DropdownButton>
         <DropdownContent>

@@ -1,18 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Difficulty } from '../utils/difficulties';
-import {
-  chord,
-  createGameBoard,
-  GameState,
-  putFlag,
-  revealCell,
-} from '../utils/minesweeper';
-import { GameboardWrapper } from './Gameboard';
-import { ScoreBoard } from './ScoreBoard';
-import { printGameboard } from '../utils/utils';
-import { ClosedCell } from './ClosedCell';
-import { OpenCell } from './OpenCell';
-import { Face } from './Face';
+import { chord, createGameBoard, putFlag, revealCell } from '../minesweeper';
+import { GameboardWrapper } from '@/features/Minesweeper/GameBoardWrapper/GameBoardWrapper';
+import { ClosedCell } from '@/features/Minesweeper/Cell/ClosedCell';
+import { OpenCell } from '@/features/Minesweeper/Cell/OpenCell';
+import { ScoreBoard } from '@/features/Minesweeper/ScoreBoard/ScoreBoard';
+import { Face } from '@/features/Minesweeper/ScoreBoard/Face';
+import { Difficulty, GameState } from '../types';
+import styles from './Game.module.css';
+
+//Debug
+import { printGameboard } from '../utils';
 
 export type IGameState = 'won' | 'lost' | 'started' | 'idle';
 
@@ -95,7 +92,7 @@ export function Game({ difficulty, getMineCells }: GameProps) {
   }
 
   return (
-    <div className="game">
+    <div className={styles.game}>
       <ScoreBoard gameState={gameState.state} flagsCount={flagsCount}>
         <Face state={state} isDigging={isDigging} onNewGame={newGame} />
       </ScoreBoard>

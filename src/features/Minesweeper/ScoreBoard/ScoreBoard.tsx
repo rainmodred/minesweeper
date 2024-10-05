@@ -1,7 +1,8 @@
 import { useState, useEffect, PropsWithChildren } from 'react';
-import useInterval from '../hooks/useInterval';
+import useInterval from '@/hooks/useInterval';
 import { Display } from './Display';
-import { State } from '../utils/minesweeper';
+import { State } from '@/features/Minesweeper/types';
+import styles from './ScoreBoard.module.css';
 
 interface ScoreBoardProps {
   flagsCount: number;
@@ -27,7 +28,7 @@ export function ScoreBoard({
   );
 
   return (
-    <div className="scoreboard">
+    <div className={styles.scoreboard}>
       <Display name="flags-display" num={flagsCount} />
       {children}
       <Display name="time-display" num={seconds} />

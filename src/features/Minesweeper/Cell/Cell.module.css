@@ -1,0 +1,74 @@
+/* Move font to body   */
+.cell {
+  font-family: 'Changa One', sans-serif;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  user-select: none;
+
+  border-top: 3px solid #fff;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #808080;
+  border-right: 3px solid #808080;
+
+  background-repeat: no-repeat;
+  background-size: 65%;
+  background-position: center;
+
+  &:active {
+    border: none;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+  }
+}
+
+.cell--flag {
+  background-image: url('@/images/flag.png');
+  background-size: cover;
+  background-size: 65%;
+  background-position: center;
+}
+
+.cell--mine {
+  background-image: url('@/images/mine.png');
+  background-size: cover;
+}
+
+.cell--open {
+  border: none;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  background-size: cover;
+}
+
+.cell--lostMine {
+  background-color: #e40016;
+}
+
+.number-1 {
+  color: #0000ff;
+}
+.number-2 {
+  color: #008200;
+}
+.number-3 {
+  color: #ff0000;
+}
+.number-4 {
+  color: #000084;
+}
+.number-5 {
+  color: #840000;
+}
+.number-6 {
+  color: #008284;
+}
+.number-7 {
+  color: #840084;
+}
+.number-8 {
+  color: #757575;
+}

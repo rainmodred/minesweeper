@@ -1,15 +1,4 @@
-import { Difficulty } from './difficulties';
-
-type CellState = 'open' | 'closed';
-
-export interface Cell {
-  state: CellState;
-  value: number;
-  hasFlag: boolean;
-  hasMine: boolean;
-}
-
-export type GameBoard = Map<string, Cell>;
+import { Difficulty, GameBoard, GameState, State } from './types';
 
 export function createGameBoard(
   { width, height, minesCount }: Difficulty,
@@ -70,15 +59,6 @@ export function getNeighbors(
 //     .filter((c) => c?.hasFlag);
 //   return flaggedCells;
 // }
-
-export type State = 'idle' | 'started' | 'won' | 'lost';
-
-export interface GameState {
-  state: State;
-  gameBoard: GameBoard;
-  lostMine: null | string;
-  difficulty: Difficulty;
-}
 
 export function revealCell(gameState: GameState, key: string): GameState {
   let newBoard = new Map(gameState.gameBoard);

@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { Cell } from '../utils/minesweeper';
+import { Cell } from '@/features/Minesweeper/types';
 import clsx from 'clsx';
+import styles from './Cell.module.css';
 
 interface ClosedCellProps {
   cell: Cell;
@@ -29,7 +30,7 @@ export const ClosedCell = memo(function ClosedCell({
       onClick={() => onDig(cellKey)}
       onContextMenu={(e) => flag(e, cellKey)}
       onMouseDown={onDigTry}
-      className={clsx('cell', cell.hasFlag && 'flag')}
+      className={clsx(styles.cell, cell.hasFlag && styles['cell--flag'])}
       key={cellKey}
     ></div>
   );

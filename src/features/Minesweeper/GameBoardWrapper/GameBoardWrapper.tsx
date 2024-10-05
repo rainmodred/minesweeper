@@ -1,4 +1,5 @@
 import { memo, PropsWithChildren } from 'react';
+import styles from './GameBoardWrapper.module.css';
 
 interface GameboardProps {
   width: number;
@@ -12,7 +13,7 @@ export const GameboardWrapper = memo(function Gameboard({
 }: PropsWithChildren<GameboardProps>) {
   return (
     <div
-      className="gameboard"
+      className={styles.gameboard}
       data-testid="gameboard"
       style={{
         gridTemplateColumns: `repeat(${width}, 24px)`,

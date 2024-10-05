@@ -1,14 +1,4 @@
-export type DifficultyTitle = 'Beginner' | 'Intermediate' | 'Expert';
-
-export type Difficulties = {
-  [key in DifficultyTitle]: Difficulty;
-};
-
-export type Difficulty = {
-  width: number;
-  height: number;
-  minesCount: number;
-};
+import { Difficulties } from './types';
 
 export const difficulties: Difficulties = {
   Beginner: {

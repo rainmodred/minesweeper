@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { State } from '../utils/minesweeper';
+import { State } from '@/features/Minesweeper/types';
+import styles from './ScoreBoard.module.css';
 
 interface FaceProps {
   state: State;
@@ -24,7 +25,7 @@ export function Face({ state, isDigging, onNewGame }: FaceProps) {
       data-testid="smile"
       data-gamestate={state}
       onClick={onNewGame}
-      className={clsx('face', faceStyle)}
+      className={clsx(styles.face, styles[faceStyle])}
     ></button>
   );
 }

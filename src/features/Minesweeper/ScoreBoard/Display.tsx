@@ -1,4 +1,5 @@
 import Digit from './Digit';
+import styles from './ScoreBoard.module.css';
 
 function convert(num: number): string[] {
   if (num > 999) return ['9', '9', '9'];
@@ -19,7 +20,7 @@ interface DisplayProps {
 export function Display({ num, name }: DisplayProps) {
   const digits = convert(num);
   return (
-    <div data-value={num} data-testid={name} className="display">
+    <div data-value={num} data-testid={name} className={styles.display}>
       {digits.map((d, i) => {
         return <Digit digit={d} key={i} />;
       })}
