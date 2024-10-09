@@ -7,6 +7,7 @@ import { getMineCells } from './features/Minesweeper/minesweeper';
 import { Menu, MenuItem } from '@/features/Minesweeper/Menu/Menu';
 import { Difficulty, DifficultyName } from './features/Minesweeper/types';
 import { MenuDialog } from './features/Minesweeper/Menu/MenuDialog';
+import { useHotkeys } from './hooks/useHotkeys';
 
 export type DifficultyState = {
   name: DifficultyName;
@@ -65,6 +66,18 @@ export function App() {
     },
     { title: 'Custom', handler: handleCustomGame },
   ];
+
+  useHotkeys(
+    menuConfig
+      .filter(
+        (item): item is MenuItem =>
+          item != null &&
+          typeof item.handler === 'function' &&
+          typeof item.hotkey === 'string'
+      )
+      .map((item) => [item.hotkey, item.handler] as [string, () => void])
+  );
+
   return (
     <div className="app">
       <div>
