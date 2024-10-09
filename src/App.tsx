@@ -8,6 +8,7 @@ import { Menu, MenuItem } from '@/features/Minesweeper/Menu/Menu';
 import { Difficulty, DifficultyName } from './features/Minesweeper/types';
 import { MenuDialog } from './features/Minesweeper/Menu/MenuDialog';
 import { useHotkeys } from './hooks/useHotkeys';
+import { useLocalStorage } from '@uidotdev/usehooks';
 
 export type DifficultyState = {
   name: DifficultyName;
@@ -16,7 +17,8 @@ export type DifficultyState = {
 
 export function App() {
   const [gameId, setGameId] = useState(0);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyState>(
+  const [selectedDifficulty, setSelectedDifficulty] = useLocalStorage(
+    'minesweeper',
     {
       name: 'Beginner',
       value: difficulties['Beginner'],
