@@ -46,7 +46,6 @@ describe('Game', () => {
     const expectedMines = gameboard.querySelectorAll(
       'div[data-closed="false"][data-mine="true"]'
     );
-    console.log([...expectedMines]);
 
     expect(expectedMines).toHaveLength(difficulty.minesCount);
 
