@@ -7,36 +7,32 @@ import {
 } from '@/components/Dropdown/Dropdown';
 import styles from './Menu.module.css';
 
-const menuConfig = [
-  { title: 'New', hotkey: 'F2' },
-  null,
-  { title: 'Beginner' },
-  { title: 'Intermediate' },
-  { title: 'Expert' },
-];
-
-interface MenuProps {
-  selectedDifficulty: string;
-  onSelect: (title: string) => void;
+export interface MenuItem {
+  title: string;
+  hotkey?: string;
+  handler: () => void;
 }
 
-export function Menu({ selectedDifficulty, onSelect }: MenuProps) {
+interface MenuProps {
+  selectedItem: string;
+  config: (null | MenuItem)[];
+}
+
+export function Menu({ selectedItem, config }: MenuProps) {
   return (
     <div className={styles.menu}>
       <Dropdown>
         <DropdownButton>Game</DropdownButton>
         <DropdownContent>
-          {menuConfig.map((menuItem) => {
+          {config.map((menuItem) => {
             if (!menuItem) {
               return <DropdownSeparator key="separator" />;
             }
             return (
               <DropdownItem
                 key={menuItem.title}
-                checked={menuItem.title === selectedDifficulty}
-                onSelect={() => {
-                  onSelect(menuItem.title);
-                }}
+                checked={menuItem.title === selectedItem}
+                onSelect={menuItem.handler}
               >
                 <div>{menuItem.title}</div>
                 {menuItem.hotkey && <div>{menuItem.hotkey}</div>}

@@ -1,36 +1,81 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import { Game } from './features/Minesweeper/Game/Game';
 
 import { difficulties } from './features/Minesweeper/difficulties';
 import { getMineCells } from './features/Minesweeper/minesweeper';
-import { Menu } from '@/features/Minesweeper/Menu/Menu';
-import { DifficultyName } from './features/Minesweeper/types';
+import { Menu, MenuItem } from '@/features/Minesweeper/Menu/Menu';
+import { Difficulty, DifficultyName } from './features/Minesweeper/types';
+import { MenuDialog } from './features/Minesweeper/Menu/MenuDialog';
+
+export type DifficultyState = {
+  name: DifficultyName;
+  value: Difficulty;
+};
 
 export function App() {
   const [gameId, setGameId] = useState(0);
-  const [selectedDifficulty, setSelectedDifficulty] =
-    useState<DifficultyName>('Beginner');
-
-  function handleDifficultyChange(title: string) {
-    if (title === 'New') {
-      setGameId(gameId + 1);
-      return;
+  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyState>(
+    {
+      name: 'Beginner',
+      value: difficulties['Beginner'],
     }
+  );
 
-    setSelectedDifficulty(title as DifficultyName);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  function handleNewGame() {
+    setGameId(gameId + 1);
   }
 
-  const difficulty = difficulties[selectedDifficulty];
+  function handleCustomGame() {
+    dialogRef.current?.showModal();
+  }
+
+  function handleDifficultyChange(value: DifficultyState) {
+    setSelectedDifficulty(value);
+  }
+
+  const menuConfig: (MenuItem | null)[] = [
+    { title: 'New', hotkey: 'F2', handler: handleNewGame },
+    null,
+    {
+      title: 'Beginner',
+      handler: () =>
+        handleDifficultyChange({
+          name: 'Beginner',
+          value: difficulties['Beginner'],
+        }),
+    },
+    {
+      title: 'Intermediate',
+      handler: () =>
+        handleDifficultyChange({
+          name: 'Intermediate',
+          value: difficulties['Intermediate'],
+        }),
+    },
+    {
+      title: 'Expert',
+      handler: () =>
+        handleDifficultyChange({
+          name: 'Expert',
+          value: difficulties['Expert'],
+        }),
+    },
+    { title: 'Custom', handler: handleCustomGame },
+  ];
   return (
     <div className="app">
       <div>
-        <Menu
-          selectedDifficulty={selectedDifficulty}
-          onSelect={handleDifficultyChange}
+        <Menu selectedItem={selectedDifficulty.name} config={menuConfig} />
+        <MenuDialog
+          ref={dialogRef}
+          difficulty={selectedDifficulty.value}
+          onSubmit={handleDifficultyChange}
         />
         <Game
-          difficulty={difficulty}
+          difficulty={selectedDifficulty.value}
           getMineCells={getMineCells}
           key={gameId}
         />
