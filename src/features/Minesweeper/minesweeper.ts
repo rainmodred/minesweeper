@@ -144,6 +144,9 @@ export function chord(gameState: GameState, key: string): GameState {
   let state = gameState;
   for (const n of neighbors) {
     state = revealCell(state, n);
+    if (isGameOver(state)) {
+      return state;
+    }
   }
   return state;
 }
@@ -182,4 +185,8 @@ export function isWon(gameBoard: GameBoard, difficulty: Difficulty): boolean {
     [...gameBoard].filter(([, c]) => c.state === 'closed').length ===
     difficulty.minesCount
   );
+}
+
+function isGameOver(gameState: GameState): boolean {
+  return gameState.state === 'won' || gameState.state === 'lost';
 }
