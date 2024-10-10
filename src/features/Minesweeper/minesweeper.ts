@@ -52,18 +52,10 @@ export function getNeighbors(
   return aroundCells;
 }
 
-// export function getFlaggedCells(gameBoard: IGameBoard, key: string) {
-//   const neighbors = getNeighbors(9, 9, key);
-//   const flaggedCells = neighbors
-//     .map((k) => gameBoard.get(k))
-//     .filter((c) => c?.hasFlag);
-//   return flaggedCells;
-// }
-
 export function revealCell(gameState: GameState, key: string): GameState {
   let newBoard = new Map(gameState.gameBoard);
   let cell = newBoard.get(key)!;
-  //cel can't be open?
+
   if (cell.hasFlag) {
     return gameState;
   }
