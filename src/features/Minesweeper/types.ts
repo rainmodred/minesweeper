@@ -17,6 +17,7 @@ export interface GameState {
 
 export type DifficultyName = 'Beginner' | 'Intermediate' | 'Expert' | 'Custom';
 export type Difficulty = {
+  name: DifficultyName;
   width: number;
   height: number;
   minesCount: number;

@@ -1,12 +1,11 @@
 import { forwardRef, useEffect, useState } from 'react';
 import { Difficulty } from '../types';
-import { DifficultyState } from '@/App';
 
 import styles from './Menu.module.css';
 
 interface MenuDialogProps {
   difficulty: Difficulty;
-  onSubmit: (difficulty: DifficultyState) => void;
+  onSubmit: (difficulty: Difficulty) => void;
 }
 
 export const MenuDialog = forwardRef<HTMLDialogElement, MenuDialogProps>(
@@ -20,7 +19,7 @@ export const MenuDialog = forwardRef<HTMLDialogElement, MenuDialogProps>(
     function handleSubmit() {
       //TODO:fix ts
       ref?.current?.close();
-      onSubmit({ name: 'Custom', value: state });
+      onSubmit(state);
     }
     return (
       <dialog className={styles.dialog} open={false} ref={ref}>
