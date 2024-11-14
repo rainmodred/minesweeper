@@ -50,7 +50,7 @@ export function Game({ difficulty, getMineCells }: GameProps) {
     }
     window.addEventListener('mouseup', handleMouseUp);
     return () => window.removeEventListener('mouseup', handleMouseUp);
-  }, [gameState]);
+  }, [gameState.state]);
 
   function newGame() {
     setGameState({
